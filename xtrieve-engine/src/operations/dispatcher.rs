@@ -75,9 +75,9 @@ pub enum OperationCode {
 
     // Utility operations
     Stop = 25,
-    Version = 26,
     Reset = 28,
-    Unlock = 27,
+    Unlock = 53,
+    Version = 54,
 
     // Unknown/invalid
     Unknown = 255,

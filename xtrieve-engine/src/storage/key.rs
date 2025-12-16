@@ -147,15 +147,16 @@ impl KeySpec {
 
     /// Serialize key specification to bytes
     pub fn to_bytes(&self) -> Vec<u8> {
-        let mut buf = Vec::with_capacity(Self::SIZE);
-        buf.write_u16::<LittleEndian>(self.position).unwrap();
-        buf.write_u16::<LittleEndian>(self.length).unwrap();
-        buf.write_u16::<LittleEndian>(self.flags.bits()).unwrap();
-        buf.write_u32::<LittleEndian>(self.unique_count).unwrap();
-        buf.write_u8(self.key_type as u8).unwrap();
-        buf.write_u8(self.null_value).unwrap();
-        buf.write_u8(self.acs_number).unwrap();
-        buf.write_u8(0).unwrap(); // reserved
+        let mut buf = vec![0u8; Self::SIZE];
+        buf[0..2].copy_from_slice(&self.position.to_le_bytes());
+        buf[2..4].copy_from_slice(&self.length.to_le_bytes());
+        buf[4..6].copy_from_slice(&self.flags.bits().to_le_bytes());
+        buf[6..10].copy_from_slice(&self.unique_count.to_le_bytes());
+        buf[10] = self.key_type as u8;
+        buf[11] = self.null_value;
+        buf[12] = self.acs_number;
+        buf[13] = 0; // reserved
+        // Bytes 14-15 are padding to reach SIZE=16
         buf
     }
 

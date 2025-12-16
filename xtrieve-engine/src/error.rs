@@ -189,10 +189,6 @@ pub enum StatusCode {
     ReadOutsideTransaction = 96,
     /// Record/page level conflict
     RecordPageConflict = 97,
-    /// Deadlock detected
-    DeadlockDetected = 78,
-    /// Lock timeout
-    LockTimeout = 79,
     /// File gone
     FileGone = 99,
     /// Server crash - locks lost
@@ -277,7 +273,7 @@ impl StatusCode {
             68 => StatusCode::RiViolation,
             69 => StatusCode::RiReferenceFileError,
             70 => StatusCode::RiOutOfSync,
-            78 => StatusCode::DeadlockDetected,
+            78 => StatusCode::WaitLockError,
             79 => StatusCode::RecordInUse,
             80 => StatusCode::FileInUse,
             81 => StatusCode::FileTableFull,
@@ -337,7 +333,7 @@ impl std::fmt::Display for StatusCode {
             StatusCode::DiskFull => "Disk full",
             StatusCode::RecordInUse => "Record in use",
             StatusCode::FileInUse => "File in use",
-            StatusCode::DeadlockDetected => "Deadlock detected",
+            StatusCode::WaitLockError => "Deadlock detected",
             _ => "Error",
         })
     }

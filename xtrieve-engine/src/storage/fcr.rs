@@ -7,7 +7,7 @@
 //! - File flags
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use std::io::{self, Cursor};
+use std::io::{self, Cursor, Write};
 
 use super::key::KeySpec;
 

@@ -198,7 +198,7 @@ impl LockManager {
 
                     // Check timeout
                     if Instant::now() >= deadline {
-                        return Err(StatusCode::LockTimeout.into());
+                        return Err(StatusCode::WaitLockError.into());
                     }
 
                     // Drop lock and wait

@@ -152,10 +152,16 @@ impl Cursor {
 
 /// Position block as transmitted over gRPC
 /// This is a serialized form of the cursor state
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct PositionBlock {
     /// Raw 128-byte position block (Btrieve compatible)
     pub data: [u8; 128],
+}
+
+impl Default for PositionBlock {
+    fn default() -> Self {
+        PositionBlock { data: [0u8; 128] }
+    }
 }
 
 impl PositionBlock {

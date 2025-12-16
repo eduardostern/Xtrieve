@@ -1,0 +1,1 @@
+{"rustc":18415816196306954164,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[9715306392608812893,"build_script_build",false,10811955922680826824]],"local":[{"RerunIfChanged":{"output":"debug/build/xtrieve-client-1f8b3cb23d6ced6a/output","paths":["../proto/xtrieve.proto","../proto"]}}],"rustflags":[],"config":0,"compile_kind":0}

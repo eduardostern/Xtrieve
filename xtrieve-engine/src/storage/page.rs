@@ -89,12 +89,12 @@ impl PageHeader {
 
     /// Write page header to bytes
     pub fn to_bytes(&self) -> Vec<u8> {
-        let mut buf = Vec::with_capacity(Self::SIZE);
-        buf.write_u8(self.page_type as u8).unwrap();
-        buf.write_u8(0).unwrap(); // reserved
-        buf.write_u16::<LittleEndian>(self.usage).unwrap();
-        buf.write_u32::<LittleEndian>(self.next_page).unwrap();
-        buf.write_u32::<LittleEndian>(self.prev_page).unwrap();
+        let mut buf = vec![0u8; Self::SIZE];
+        buf[0] = self.page_type as u8;
+        buf[1] = 0; // reserved
+        buf[2..4].copy_from_slice(&self.usage.to_le_bytes());
+        buf[4..8].copy_from_slice(&self.next_page.to_le_bytes());
+        buf[8..12].copy_from_slice(&self.prev_page.to_le_bytes());
         buf
     }
 }

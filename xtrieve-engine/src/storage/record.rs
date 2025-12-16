@@ -4,7 +4,7 @@
 //! that tracks the position and status of records within the page.
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use std::io::{self, Cursor};
+use std::io::{self, Cursor, Write};
 
 /// Physical address of a record (page number + slot)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
