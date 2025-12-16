@@ -1,0 +1,25 @@
+[package]
+name = "xtrieved"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Xtrieve daemon - Btrieve 5.1 compatible database server"
+
+[[bin]]
+name = "xtrieved"
+path = "src/main.rs"
+
+[dependencies]
+xtrieve-engine.workspace = true
+tokio.workspace = true
+tonic.workspace = true
+prost.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+toml.workspace = true
+anyhow.workspace = true
+
+[build-dependencies]
+tonic-build = "0.12"

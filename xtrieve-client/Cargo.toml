@@ -1,0 +1,18 @@
+[package]
+name = "xtrieve-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Client library for Xtrieve - Btrieve 5.1 compatible API"
+
+[dependencies]
+xtrieve-engine.workspace = true
+tokio.workspace = true
+tonic.workspace = true
+prost.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+bytes.workspace = true
+
+[build-dependencies]
+tonic-build = "0.12"

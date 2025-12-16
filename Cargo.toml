@@ -1,0 +1,52 @@
+[workspace]
+resolver = "2"
+members = [
+    "xtrieve-engine",
+    "xtrieved",
+    "xtrieve-client",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Eduardo"]
+repository = "https://github.com/eduardo/xtrieve"
+description = "Btrieve 5.1 compatible ISAM database engine"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# gRPC
+tonic = "0.12"
+prost = "0.13"
+
+# Binary parsing
+byteorder = "1.5"
+bytes = "1"
+
+# Concurrency
+parking_lot = "0.12"
+
+# Data structures
+lru = "0.12"
+
+# Error handling
+thiserror = "1"
+anyhow = "1"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Config
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+
+# Internal crates
+xtrieve-engine = { path = "xtrieve-engine" }
+xtrieve-client = { path = "xtrieve-client" }

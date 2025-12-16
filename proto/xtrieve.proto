@@ -1,0 +1,196 @@
+syntax = "proto3";
+
+package xtrieve;
+
+// Xtrieve gRPC service - Btrieve 5.1 compatible operations
+service Xtrieve {
+  // Execute a single Btrieve operation
+  rpc Execute(BtrieveRequest) returns (BtrieveResponse);
+
+  // Execute an extended operation that may return multiple records
+  rpc ExecuteExtended(BtrieveRequest) returns (stream BtrieveResponse);
+
+  // Server status and management
+  rpc GetStatus(StatusRequest) returns (StatusResponse);
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+// Main request message - mirrors Btrieve's parameter block
+message BtrieveRequest {
+  // Btrieve operation code (0-50+)
+  uint32 operation_code = 1;
+
+  // Position block - maintains cursor state between calls
+  // 128 bytes in original Btrieve, contains file handle and positioning info
+  bytes position_block = 2;
+
+  // Data buffer - record data for Insert/Update, receives data for Get
+  bytes data_buffer = 3;
+
+  // Data buffer length
+  uint32 data_buffer_length = 4;
+
+  // Key buffer - key value for searches
+  bytes key_buffer = 5;
+
+  // Key buffer length
+  uint32 key_buffer_length = 6;
+
+  // Key number (0-23 typically)
+  int32 key_number = 7;
+
+  // File path for Open/Create operations
+  string file_path = 8;
+
+  // Open mode for Open operation
+  int32 open_mode = 9;
+
+  // File specification for Create operation
+  FileSpec file_spec = 10;
+
+  // Lock bias: 0=no lock, 100=single wait, 200=single no-wait, 300=multi wait, 400=multi no-wait
+  int32 lock_bias = 11;
+}
+
+// Response message - returns operation result
+message BtrieveResponse {
+  // Btrieve status code (0 = success)
+  uint32 status_code = 1;
+
+  // Updated position block
+  bytes position_block = 2;
+
+  // Returned record data
+  bytes data_buffer = 3;
+
+  // Actual data length returned
+  uint32 data_length = 4;
+
+  // Returned key value
+  bytes key_buffer = 5;
+
+  // Actual key length returned
+  uint32 key_length = 6;
+}
+
+// File specification for Create operation
+message FileSpec {
+  // Record length (fixed portion)
+  uint32 record_length = 1;
+
+  // Page size: 512, 1024, 2048, 4096
+  uint32 page_size = 2;
+
+  // Number of keys
+  uint32 num_keys = 3;
+
+  // File flags
+  uint32 file_flags = 4;
+
+  // Pre-allocation in pages
+  uint32 pre_allocation = 5;
+
+  // Key specifications
+  repeated KeySpec keys = 6;
+}
+
+// Key specification
+message KeySpec {
+  // Position in record (0-based offset)
+  uint32 position = 1;
+
+  // Key length in bytes
+  uint32 length = 2;
+
+  // Key flags (duplicates, modifiable, etc.)
+  uint32 flags = 3;
+
+  // Key type
+  KeyType key_type = 4;
+
+  // Null value (for nullable keys)
+  uint32 null_value = 5;
+
+  // Manual key number (for supplemental indexes)
+  uint32 manual_key_number = 6;
+
+  // ACS (Alternate Collating Sequence) number
+  uint32 acs_number = 7;
+}
+
+// Key types matching Btrieve
+enum KeyType {
+  KEY_TYPE_STRING = 0;           // ASCII string, case-sensitive
+  KEY_TYPE_INTEGER = 1;          // Signed integer (2, 4, 8 bytes)
+  KEY_TYPE_FLOAT = 2;            // IEEE float
+  KEY_TYPE_DATE = 3;             // Date (4 bytes)
+  KEY_TYPE_TIME = 4;             // Time (4 bytes)
+  KEY_TYPE_DECIMAL = 5;          // Packed decimal
+  KEY_TYPE_MONEY = 6;            // Currency
+  KEY_TYPE_LOGICAL = 7;          // Boolean
+  KEY_TYPE_NUMERIC = 8;          // ASCII numeric (BCD)
+  KEY_TYPE_BFLOAT = 9;           // Btrieve float
+  KEY_TYPE_LSTRING = 10;         // Length-prefixed string
+  KEY_TYPE_ZSTRING = 11;         // Null-terminated string
+  KEY_TYPE_UNSIGNED_BINARY = 14; // Unsigned integer
+  KEY_TYPE_AUTOINCREMENT = 15;   // Auto-increment
+}
+
+// Key flags (can be combined)
+enum KeyFlags {
+  KEY_FLAGS_NONE = 0;
+  KEY_FLAGS_DUPLICATES = 1;      // Allow duplicate key values
+  KEY_FLAGS_MODIFIABLE = 2;      // Key can be changed with Update
+  KEY_FLAGS_BINARY = 4;          // Binary comparison (obsolete, use types)
+  KEY_FLAGS_NULL = 8;            // Null key values allowed
+  KEY_FLAGS_SEGMENTED = 16;      // This is a segment of a compound key
+  KEY_FLAGS_ALT_SEQUENCE = 32;   // Use alternate collating sequence
+  KEY_FLAGS_DESCENDING = 64;     // Descending sort order
+  KEY_FLAGS_SUPPLEMENTAL = 128;  // Supplemental index (added later)
+  KEY_FLAGS_EXTENDED_TYPE = 256; // Extended key type in use
+  KEY_FLAGS_MANUAL = 512;        // Manual key number assignment
+}
+
+// Server status request
+message StatusRequest {
+  bool include_open_files = 1;
+  bool include_statistics = 2;
+}
+
+// Server status response
+message StatusResponse {
+  string version = 1;
+  uint64 uptime_seconds = 2;
+  uint32 open_files = 3;
+  uint32 active_transactions = 4;
+  repeated OpenFileInfo open_file_list = 5;
+  ServerStatistics statistics = 6;
+}
+
+// Info about an open file
+message OpenFileInfo {
+  string file_path = 1;
+  uint32 open_count = 2;
+  uint32 record_count = 3;
+  bool has_locks = 4;
+}
+
+// Server statistics
+message ServerStatistics {
+  uint64 total_operations = 1;
+  uint64 total_reads = 2;
+  uint64 total_writes = 3;
+  uint64 cache_hits = 4;
+  uint64 cache_misses = 5;
+}
+
+// Shutdown request
+message ShutdownRequest {
+  bool graceful = 1;  // Wait for active operations to complete
+}
+
+// Shutdown response
+message ShutdownResponse {
+  bool accepted = 1;
+  string message = 2;
+}

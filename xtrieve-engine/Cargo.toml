@@ -1,0 +1,19 @@
+[package]
+name = "xtrieve-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Core storage engine for Xtrieve - Btrieve 5.1 compatible ISAM database"
+
+[dependencies]
+byteorder.workspace = true
+bytes.workspace = true
+parking_lot.workspace = true
+lru.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+bitflags = "2"
+
+[dev-dependencies]
+tempfile = "3"
