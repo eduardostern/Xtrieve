@@ -43,19 +43,17 @@ impl RecordAddress {
     }
 
     /// Convert to a 4-byte position (as used by Get Position operation)
-    /// This uses the legacy Btrieve format: high 20 bits = page, low 12 bits = offset
-    pub fn to_position(&self, page_size: u16) -> u32 {
-        // Calculate byte offset within page
-        // Simplified: slot * estimated slot size
-        let offset = (self.slot as u32) * 4; // Rough estimate
-        (self.page << 12) | (offset & 0xFFF)
+    /// With Btrieve 5.1 format, slot contains the absolute file offset
+    pub fn to_position(&self, _page_size: u16) -> u32 {
+        // In Btrieve 5.1 format, slot contains the file offset
+        self.slot as u32
     }
 
     /// Convert from a 4-byte position
+    /// With Btrieve 5.1 format, position is the absolute file offset
     pub fn from_position(position: u32) -> Self {
-        let page = position >> 12;
-        let slot = ((position & 0xFFF) / 4) as u16;
-        RecordAddress { page, slot }
+        // Store file offset in slot field (page=0 indicates file offset format)
+        RecordAddress { page: 0, slot: position as u16 }
     }
 }
 
@@ -168,6 +166,8 @@ pub struct DataPage {
     pub slot_count: u16,
     /// Free space in page
     pub free_space: u16,
+    /// First free slot index (0xFFFF = none) - head of free list
+    pub first_free_slot: u16,
     /// Slot directory (at end of page, grows backward)
     pub slots: Vec<SlotEntry>,
     /// Raw page data
@@ -175,8 +175,10 @@ pub struct DataPage {
 }
 
 impl DataPage {
-    /// Header size for data pages
-    pub const HEADER_SIZE: usize = 16;
+    /// Header size for data pages (includes first_free_slot at offset 16-17)
+    pub const HEADER_SIZE: usize = 18;
+    /// Value indicating no free slots in free list
+    pub const NO_FREE_SLOT: u16 = 0xFFFF;
 
     /// Parse a data page from raw bytes
     pub fn from_bytes(page_number: u32, data: Vec<u8>) -> io::Result<Self> {
@@ -198,6 +200,7 @@ impl DataPage {
         let next_page = cursor.read_u32::<LittleEndian>()?;
         let prev_page = cursor.read_u32::<LittleEndian>()?;
         let free_space = cursor.read_u16::<LittleEndian>()?;
+        let first_free_slot = cursor.read_u16::<LittleEndian>()?;
 
         // Read slot directory from end of page
         let mut slots = Vec::with_capacity(slot_count as usize);
@@ -218,6 +221,7 @@ impl DataPage {
             prev_page,
             slot_count,
             free_space,
+            first_free_slot,
             slots,
             data,
         })
@@ -316,7 +320,15 @@ impl DataPage {
     pub fn new(page_number: u32, page_size: u16) -> Self {
         let mut data = vec![0u8; page_size as usize];
 
-        // Page header
+        // Page header layout:
+        // [0]     page_type
+        // [1]     reserved
+        // [2..4]  slot_count (u16)
+        // [4..8]  next_page (u32)
+        // [8..12] prev_page (u32)
+        // [12..14] (unused in original, now part of header)
+        // [14..16] free_space (u16)
+        // [16..18] first_free_slot (u16) - head of free list
         data[0] = 0x02; // Data page type
         data[1] = 0x00; // Reserved
         // slot_count at [2..4] = 0
@@ -327,6 +339,9 @@ impl DataPage {
         let free_space = page_size - Self::HEADER_SIZE as u16;
         data[14..16].copy_from_slice(&free_space.to_le_bytes());
 
+        // First free slot = 0xFFFF (none)
+        data[16..18].copy_from_slice(&Self::NO_FREE_SLOT.to_le_bytes());
+
         DataPage {
             page_number,
             page_size,
@@ -334,6 +349,7 @@ impl DataPage {
             prev_page: 0,
             slot_count: 0,
             free_space,
+            first_free_slot: Self::NO_FREE_SLOT,
             slots: Vec::new(),
             data,
         }
@@ -341,8 +357,59 @@ impl DataPage {
 
     /// Insert a record into this page
     /// Returns the slot number, or None if record doesn't fit
+    ///
+    /// Btrieve behavior: Uses free list for O(1) lookup of deleted slots.
+    /// First tries to reuse space from free list, only allocates new space if empty.
     pub fn insert_record(&mut self, record_data: &[u8]) -> Option<u16> {
         let record_len = record_data.len() as u16;
+
+        // Btrieve: Check free list first (O(1) - just check head of list)
+        if self.first_free_slot != Self::NO_FREE_SLOT {
+            let free_idx = self.first_free_slot as usize;
+            if let Some(slot) = self.slots.get_mut(free_idx) {
+                if slot.is_deleted() && slot.length >= record_len {
+                    let record_offset = slot.offset as usize;
+
+                    // Read next free slot from the deleted record's data area
+                    // (stored in first 2 bytes when deleted)
+                    let next_free = if slot.length >= 2 {
+                        u16::from_le_bytes([
+                            self.data[record_offset],
+                            self.data[record_offset + 1],
+                        ])
+                    } else {
+                        Self::NO_FREE_SLOT
+                    };
+
+                    // Write record data at the deleted slot's location
+                    self.data[record_offset..record_offset + record_len as usize]
+                        .copy_from_slice(record_data);
+
+                    // Clear any remaining space if new record is shorter
+                    if record_len < slot.length {
+                        let pad_start = record_offset + record_len as usize;
+                        let pad_end = record_offset + slot.length as usize;
+                        self.data[pad_start..pad_end].fill(0);
+                    }
+
+                    // Update slot entry: mark as in-use, clear deleted flag
+                    slot.flags = SlotEntry::FLAG_IN_USE;
+
+                    // Update slot in page data
+                    let slot_offset = self.page_size as usize - ((free_idx + 1) * SlotEntry::SIZE);
+                    let slot_bytes = slot.to_bytes();
+                    self.data[slot_offset..slot_offset + SlotEntry::SIZE].copy_from_slice(&slot_bytes);
+
+                    // Update free list head to next free slot
+                    self.first_free_slot = next_free;
+                    self.data[16..18].copy_from_slice(&self.first_free_slot.to_le_bytes());
+
+                    return Some(free_idx as u16);
+                }
+            }
+        }
+
+        // No suitable free slot - allocate new space
         let needed_space = record_len + SlotEntry::SIZE as u16;
 
         if self.free_space < needed_space {
@@ -355,9 +422,8 @@ impl DataPage {
         let data_end = if self.slots.is_empty() {
             Self::HEADER_SIZE
         } else {
-            // Find the end of last record
+            // Find the end of last record (including deleted ones, since they still occupy space)
             self.slots.iter()
-                .filter(|s| s.is_in_use())
                 .map(|s| s.offset as usize + s.length as usize)
                 .max()
                 .unwrap_or(Self::HEADER_SIZE)
@@ -396,17 +462,35 @@ impl DataPage {
         Some(slot_num)
     }
 
-    /// Mark a record as deleted
+    /// Mark a record as deleted and add to free list
+    /// Btrieve behavior: Deleted slots are linked in a free list for O(1) reuse
     pub fn delete_record(&mut self, slot: u16) -> bool {
         if let Some(entry) = self.slots.get_mut(slot as usize) {
             if entry.is_in_use() && !entry.is_deleted() {
+                let record_offset = entry.offset as usize;
+
+                // Store current free list head in the deleted record's data area
+                // (first 2 bytes become "next free" pointer)
+                if entry.length >= 2 {
+                    self.data[record_offset..record_offset + 2]
+                        .copy_from_slice(&self.first_free_slot.to_le_bytes());
+                }
+
+                // Mark slot as deleted
                 entry.flags |= SlotEntry::FLAG_DELETED;
-                // Update in page data
+
+                // Update slot in page data
                 let slot_offset = self.page_size as usize - ((slot as usize + 1) * SlotEntry::SIZE);
                 self.data[slot_offset + 4] = entry.flags;
-                // Add space back to free (could reclaim more with compaction)
+
+                // Prepend this slot to free list (new head)
+                self.first_free_slot = slot;
+                self.data[16..18].copy_from_slice(&self.first_free_slot.to_le_bytes());
+
+                // Add space back to free_space counter
                 self.free_space += entry.length;
                 self.data[14..16].copy_from_slice(&self.free_space.to_le_bytes());
+
                 return true;
             }
         }

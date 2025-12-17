@@ -160,21 +160,30 @@ async fn fetch_weather(city: &City) -> Result<WeatherObservation, Box<dyn std::e
     })
 }
 
-/// Build file creation buffer with key spec
+/// Build file creation buffer with key specs
 fn build_create_buffer() -> Vec<u8> {
     let mut buf = Vec::new();
 
     // File spec: record_len(2), page_size(2), num_keys(2), unused(4)
     buf.extend_from_slice(&(RECORD_LEN as u16).to_le_bytes()); // record length
     buf.extend_from_slice(&4096u16.to_le_bytes());              // page size
-    buf.extend_from_slice(&1u16.to_le_bytes());                 // number of keys
+    buf.extend_from_slice(&2u16.to_le_bytes());                 // number of keys (2 indexes)
     buf.extend_from_slice(&0u32.to_le_bytes());                 // unused
 
+    // Key 0: timestamp (for chronological ordering)
     // Key spec: position(2), length(2), flags(2), key_type(1), null_val(1), reserved(8)
     buf.extend_from_slice(&0u16.to_le_bytes());    // key position (timestamp at offset 0)
     buf.extend_from_slice(&8u16.to_le_bytes());    // key length (8 bytes for i64)
     buf.extend_from_slice(&1u16.to_le_bytes());    // flags: duplicates allowed
     buf.push(14); // key type: unsigned binary
+    buf.push(0);  // null value
+    buf.extend_from_slice(&[0u8; 8]); // reserved
+
+    // Key 1: city_name (for alphabetical ordering)
+    buf.extend_from_slice(&8u16.to_le_bytes());    // key position (city_name at offset 8)
+    buf.extend_from_slice(&32u16.to_le_bytes());   // key length (32 bytes string)
+    buf.extend_from_slice(&1u16.to_le_bytes());    // flags: duplicates allowed
+    buf.push(0);  // key type: string
     buf.push(0);  // null value
     buf.extend_from_slice(&[0u8; 8]); // reserved
 

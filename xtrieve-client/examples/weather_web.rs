@@ -106,11 +106,11 @@ async fn fetch_observations(client: &mut AsyncXtrieveClient) -> Vec<WeatherObser
 
     let pos_block = open_resp.position_block.clone();
 
-    // Get first record
+    // Get first record using key 1 (city name) for alphabetical ordering
     let first_resp = match client.execute(BtrieveRequest {
         operation_code: OP_GET_FIRST,
         position_block: pos_block.clone(),
-        key_number: 0,
+        key_number: 1, // Use city name index for alphabetical order
         ..Default::default()
     }).await {
         Ok(r) => r,
@@ -132,12 +132,12 @@ async fn fetch_observations(client: &mut AsyncXtrieveClient) -> Vec<WeatherObser
             observations.push(obs);
         }
 
-        // Get remaining records
+        // Get remaining records using key 1 (city name) for alphabetical ordering
         loop {
             let next_resp = match client.execute(BtrieveRequest {
                 operation_code: OP_GET_NEXT,
                 position_block: current_pos.clone(),
-                key_number: 0,
+                key_number: 1, // Use city name index for alphabetical order
                 ..Default::default()
             }).await {
                 Ok(r) => r,

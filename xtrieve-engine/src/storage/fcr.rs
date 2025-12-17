@@ -1,4 +1,4 @@
-//! File Control Record (FCR) - Btrieve 5.1 file header
+//! File Control Record (FCR) - Btrieve file header
 //!
 //! The FCR is always stored in page 0 and contains metadata about the file:
 //! - Record length and page size
@@ -6,7 +6,11 @@
 //! - Key specifications
 //! - File flags
 //!
+//! Xtrieve-created files use version 0x58 ('X') to distinguish from real Btrieve 5.1.
+//! Real Btrieve 5.1 files use version 0x0A (10).
+//!
 //! Layout based on real DOS Btrieve 5.1 files:
+//! - Offset 0x04: version (0x0A for Btrieve 5.1, 0x58 for Xtrieve)
 //! - Offset 0x08: page_size (u16)
 //! - Offset 0x14: num_keys (u16)
 //! - Offset 0x16: record_length (u16)

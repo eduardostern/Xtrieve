@@ -27,6 +27,41 @@ fn get_file_path(position_block: &[u8]) -> Option<PathBuf> {
     Some(PathBuf::from(path_str.as_ref()))
 }
 
+/// Convert file offset (stored in RecordAddress.slot) to actual page number and slot index
+/// Returns (page_number, slot_index) or None if not found
+fn file_offset_to_page_slot(
+    engine: &Engine,
+    file_path: &PathBuf,
+    file_offset: u16,
+    page_size: u16,
+) -> BtrieveResult<(u32, u16)> {
+    let page_number = (file_offset as u32 * 1) / page_size as u32;
+    let offset_in_page = (file_offset as usize) % (page_size as usize);
+
+    let file = engine.files.get(file_path)
+        .ok_or(BtrieveError::Status(StatusCode::FileNotOpen))?;
+    let f = file.read();
+
+    let page = if let Some(cached) = engine.cache.get(&file_path.to_string_lossy(), page_number) {
+        cached
+    } else {
+        let page = f.read_page(page_number)?;
+        engine.cache.put(&file_path.to_string_lossy(), page.clone(), false);
+        page
+    };
+
+    let data_page = DataPage::from_bytes(page_number, page.data)?;
+
+    // Find slot with matching offset
+    for (idx, slot) in data_page.slots.iter().enumerate() {
+        if slot.offset as usize == offset_in_page && slot.is_in_use() {
+            return Ok((page_number, idx as u16));
+        }
+    }
+
+    Err(BtrieveError::Status(StatusCode::InvalidRecordAddress))
+}
+
 /// Insert a key into the B+ tree, handling splits as needed
 fn btree_insert(
     engine: &Engine,
@@ -352,7 +387,10 @@ pub fn insert(
             .insert_record(&record)
             .ok_or(BtrieveError::Status(StatusCode::DiskFull))?;
 
-        record_addr = RecordAddress::new(new_page_num, slot);
+        // Btrieve 5.1 compatibility: store absolute file offset in record address
+        let slot_entry = &data_page.slots[slot as usize];
+        let file_offset = (new_page_num as u32 * page_size as u32) + slot_entry.offset as u32;
+        record_addr = RecordAddress::new(0, file_offset as u16);
 
         // Write data page
         let page = Page::from_data(new_page_num, data_page.to_bytes());
@@ -377,7 +415,10 @@ pub fn insert(
         let mut data_page = DataPage::from_bytes(last_data_page, page.data)?;
 
         if let Some(slot) = data_page.insert_record(&record) {
-            record_addr = RecordAddress::new(last_data_page, slot);
+            // Btrieve 5.1 compatibility: store absolute file offset
+            let slot_entry = &data_page.slots[slot as usize];
+            let file_offset = (last_data_page as u32 * page_size as u32) + slot_entry.offset as u32;
+            record_addr = RecordAddress::new(0, file_offset as u16);
 
             let f = file.read();
             let page = Page::from_data(last_data_page, data_page.to_bytes());
@@ -400,7 +441,10 @@ pub fn insert(
                 .insert_record(&record)
                 .ok_or(BtrieveError::Status(StatusCode::DiskFull))?;
 
-            record_addr = RecordAddress::new(new_page_num, slot);
+            // Btrieve 5.1 compatibility: store absolute file offset
+            let slot_entry = &new_data_page.slots[slot as usize];
+            let file_offset = (new_page_num as u32 * page_size as u32) + slot_entry.offset as u32;
+            record_addr = RecordAddress::new(0, file_offset as u16);
 
             // Link pages
             new_data_page.set_prev_page(last_data_page);
@@ -530,13 +574,21 @@ pub fn update(
     let mut padded_record = new_record.to_vec();
     padded_record.resize(record_length as usize, 0);
 
+    // Convert file offset to page/slot (Btrieve 5.1: record_addr.slot contains file offset)
+    let (actual_page, actual_slot) = file_offset_to_page_slot(
+        engine,
+        &path,
+        record_addr.slot,
+        page_size,
+    )?;
+
     // Read old record
-    let page = f.read_page(record_addr.page)?;
+    let page = f.read_page(actual_page)?;
     drop(f);
 
-    let data_page = DataPage::from_bytes(record_addr.page, page.data.clone())?;
+    let data_page = DataPage::from_bytes(actual_page, page.data.clone())?;
     let old_record = data_page
-        .get_record(record_addr.slot)
+        .get_record(actual_slot)
         .ok_or(BtrieveError::Status(StatusCode::InvalidRecordAddress))?
         .to_vec();
 
@@ -565,18 +617,18 @@ pub fn update(
         }
     }
 
-    // Update record data
+    // Update record data (use actual_page/actual_slot from earlier conversion)
     let f = file.read();
-    let page = f.read_page(record_addr.page)?;
+    let page = f.read_page(actual_page)?;
     drop(f);
 
-    let mut data_page = DataPage::from_bytes(record_addr.page, page.data)?;
-    if !data_page.update_record(record_addr.slot, &padded_record) {
+    let mut data_page = DataPage::from_bytes(actual_page, page.data)?;
+    if !data_page.update_record(actual_slot, &padded_record) {
         return Err(BtrieveError::Status(StatusCode::IoError));
     }
 
     // Write and update cache
-    let updated_page = Page::from_data(record_addr.page, data_page.to_bytes());
+    let updated_page = Page::from_data(actual_page, data_page.to_bytes());
     let f = file.read();
     f.write_page_for_session(&updated_page, session)?;
     drop(f);
@@ -693,14 +745,24 @@ pub fn delete(
     let f = file.read();
     let page_size = f.fcr.page_size;
     let keys = f.fcr.keys.clone();
-
-    // Read the record to get key values
-    let page = f.read_page(record_addr.page)?;
     drop(f);
 
-    let mut data_page = DataPage::from_bytes(record_addr.page, page.data)?;
+    // Convert file offset to page/slot (Btrieve 5.1: record_addr.slot contains file offset)
+    let (actual_page, actual_slot) = file_offset_to_page_slot(
+        engine,
+        &path,
+        record_addr.slot,
+        page_size,
+    )?;
+
+    // Read the record to get key values
+    let f = file.read();
+    let page = f.read_page(actual_page)?;
+    drop(f);
+
+    let mut data_page = DataPage::from_bytes(actual_page, page.data)?;
     let record = data_page
-        .get_record(record_addr.slot)
+        .get_record(actual_slot)
         .ok_or(BtrieveError::Status(StatusCode::InvalidRecordAddress))?
         .to_vec();
 
@@ -711,10 +773,10 @@ pub fn delete(
     }
 
     // Mark record as deleted
-    data_page.delete_record(record_addr.slot);
+    data_page.delete_record(actual_slot);
 
     let f = file.read();
-    let page = Page::from_data(record_addr.page, data_page.to_bytes());
+    let page = Page::from_data(actual_page, data_page.to_bytes());
     f.write_page_for_session(&page, session)?;
     drop(f);
 

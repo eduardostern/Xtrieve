@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use crate::error::{BtrieveError, BtrieveResult, StatusCode};
 use crate::file_manager::cursor::{Cursor, PositionBlock};
 use crate::file_manager::locking::SessionId;
-use crate::storage::record::{DataPage, RecordAddress};
+use crate::storage::record::RecordAddress;
 
 use super::dispatcher::{Engine, OperationRequest, OperationResponse};
 
@@ -25,6 +25,7 @@ fn get_file_path(position_block: &[u8]) -> Option<PathBuf> {
 }
 
 /// Helper to read a record given its address
+/// In Btrieve 5.1 format, address.slot contains the absolute file offset
 fn read_record(
     engine: &Engine,
     file_path: &PathBuf,
@@ -35,19 +36,28 @@ fn read_record(
 
     let f = file.read();
 
-    let page = if let Some(cached) = engine.cache.get(&file_path.to_string_lossy(), address.page) {
+    // Btrieve 5.1: address.slot contains absolute file offset to record data
+    let file_offset = address.slot as u64;
+    let page_size = f.fcr.page_size as u64;
+    let page_number = (file_offset / page_size) as u32;
+    let offset_in_page = (file_offset % page_size) as usize;
+
+    let page = if let Some(cached) = engine.cache.get(&file_path.to_string_lossy(), page_number) {
         cached
     } else {
-        let page = f.read_page(address.page)?;
+        let page = f.read_page(page_number)?;
         engine.cache.put(&file_path.to_string_lossy(), page.clone(), false);
         page
     };
 
-    let data_page = DataPage::from_bytes(address.page, page.data)?;
+    let record_length = f.fcr.record_length as usize;
 
-    data_page.get_record(address.slot)
-        .map(|r| r.to_vec())
-        .ok_or(BtrieveError::Status(StatusCode::InvalidRecordAddress))
+    if offset_in_page + record_length > page.data.len() {
+        return Err(BtrieveError::Status(StatusCode::InvalidRecordAddress));
+    }
+
+    let record_data = page.data[offset_in_page..offset_in_page + record_length].to_vec();
+    Ok(record_data)
 }
 
 /// Operation 22: Get Position - get physical address of current record
