@@ -1,0 +1,22 @@
+{
+    "name": "xtrieve/client",
+    "description": "Xtrieve database client - Btrieve 5.1 compatible ISAM engine",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Xtrieve\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "ext-sockets": "*"
+    },
+    "keywords": [
+        "xtrieve",
+        "btrieve",
+        "isam",
+        "database",
+        "b-tree"
+    ]
+}
