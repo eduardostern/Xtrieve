@@ -131,6 +131,12 @@ pub fn get_equal(
 
     let entry = result.entry.ok_or(BtrieveError::Status(StatusCode::KeyNotFound))?;
 
+    // Btrieve 5.1: Check if record is locked by another session's transaction
+    // This provides isolation - uncommitted changes are invisible because we can't read them
+    if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+        return Err(BtrieveError::Status(StatusCode::RecordInUse));
+    }
+
     // Read the record
     let record_data = read_record(engine, &path, entry.record_address)?;
 
@@ -206,6 +212,12 @@ pub fn get_next(
     let next_index = cursor.leaf_index + 1;
     if let Some(entry) = node.get_entry(next_index) {
         drop(f);
+
+        // Btrieve 5.1: Check if record is locked by another session's transaction
+        if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+            return Err(BtrieveError::Status(StatusCode::RecordInUse));
+        }
+
         let record_data = read_record(engine, &path, entry.record_address)?;
 
         let mut new_cursor = Cursor::new(path, cursor.key_number);
@@ -241,6 +253,12 @@ pub fn get_next(
 
     if let Some(entry) = next_node.first_entry() {
         drop(f);
+
+        // Btrieve 5.1: Check if record is locked by another session's transaction
+        if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+            return Err(BtrieveError::Status(StatusCode::RecordInUse));
+        }
+
         let record_data = read_record(engine, &path, entry.record_address)?;
 
         let mut new_cursor = Cursor::new(path, cursor.key_number);
@@ -300,6 +318,12 @@ pub fn get_previous(
         let prev_index = cursor.leaf_index - 1;
         if let Some(entry) = node.get_entry(prev_index) {
             drop(f);
+
+            // Btrieve 5.1: Check if record is locked by another session's transaction
+            if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+                return Err(BtrieveError::Status(StatusCode::RecordInUse));
+            }
+
             let record_data = read_record(engine, &path, entry.record_address)?;
 
             let mut new_cursor = Cursor::new(path, cursor.key_number);
@@ -337,6 +361,12 @@ pub fn get_previous(
     if let Some(entry) = prev_node.last_entry() {
         let last_index = prev_node.leaf_entries.len() - 1;
         drop(f);
+
+        // Btrieve 5.1: Check if record is locked by another session's transaction
+        if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+            return Err(BtrieveError::Status(StatusCode::RecordInUse));
+        }
+
         let record_data = read_record(engine, &path, entry.record_address)?;
 
         let mut new_cursor = Cursor::new(path, cursor.key_number);
@@ -387,16 +417,57 @@ pub fn get_greater(
     }
 
     // Navigate to leaf and find first entry > search_key
-    // For now, use get_equal and then get_next approach
-    // TODO: Optimize with direct traversal
+    let mut current_page = root_page;
 
-    // First try exact match, then get next
-    let result = search_btree(engine, &path, key_number, search_key);
-    drop(f);
+    loop {
+        let page = if let Some(cached) = engine.cache.get(&path.to_string_lossy(), current_page) {
+            cached
+        } else {
+            let page = f.read_page(current_page)?;
+            engine.cache.put(&path.to_string_lossy(), page.clone(), false);
+            page
+        };
 
-    // Simulate by using get_equal then get_next
-    // This is a simplified implementation
-    Err(BtrieveError::Status(StatusCode::KeyNotFound))
+        let node = IndexNode::from_bytes(current_page, &page.data, key_spec.clone())?;
+
+        if node.is_leaf() {
+            // Find first entry > search_key
+            for (idx, entry) in node.leaf_entries.iter().enumerate() {
+                if entry.key.as_slice() > search_key.as_slice() {
+                    // Btrieve 5.1: Check if record is locked by another session's transaction
+                    if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+                        return Err(BtrieveError::Status(StatusCode::RecordInUse));
+                    }
+
+                    drop(f);
+                    let record_data = read_record(engine, &path, entry.record_address)?;
+
+                    let mut cursor = Cursor::new(path, req.key_number);
+                    cursor.position_with_leaf(
+                        entry.record_address,
+                        entry.key.clone(),
+                        record_data.clone(),
+                        current_page,
+                        idx,
+                    );
+                    let position = PositionBlock::from_cursor(&cursor);
+
+                    return Ok(OperationResponse::success()
+                        .with_data(record_data)
+                        .with_key(entry.key.clone())
+                        .with_position(position.data.to_vec()));
+                }
+            }
+            // No entry found in this leaf, try next sibling
+            if node.next_sibling == 0 {
+                return Err(BtrieveError::Status(StatusCode::KeyNotFound));
+            }
+            current_page = node.next_sibling;
+        } else {
+            // Internal node - find child to descend into
+            current_page = node.find_child(search_key);
+        }
+    }
 }
 
 /// Operation 9: Get Greater or Equal
@@ -412,24 +483,112 @@ pub fn get_greater_or_equal(
     }
 }
 
-/// Operation 10: Get Less Than
+/// Operation 10: Get Less Than - get last record with key < search key
 pub fn get_less_than(
-    _engine: &Engine,
-    _session: SessionId,
-    _req: &OperationRequest,
+    engine: &Engine,
+    session: SessionId,
+    req: &OperationRequest,
 ) -> BtrieveResult<OperationResponse> {
-    // TODO: Implement
-    Err(BtrieveError::Status(StatusCode::InvalidOperation))
+    let path = get_file_path(&req.position_block)
+        .ok_or(BtrieveError::Status(StatusCode::FileNotOpen))?;
+
+    let key_number = req.key_number as usize;
+    let search_key = &req.key_buffer;
+
+    let file = engine.files.get(&path)
+        .ok_or(BtrieveError::Status(StatusCode::FileNotOpen))?;
+
+    let f = file.read();
+
+    if key_number >= f.fcr.keys.len() {
+        return Err(BtrieveError::Status(StatusCode::InvalidKeyNumber));
+    }
+
+    let key_spec = &f.fcr.keys[key_number];
+    let root_page = *f.fcr.index_roots.get(key_number).unwrap_or(&0);
+
+    if root_page == 0 {
+        return Err(BtrieveError::Status(StatusCode::KeyNotFound));
+    }
+
+    // Navigate to leaf and find last entry < search_key
+    let mut current_page = root_page;
+    let mut best_entry: Option<(crate::storage::btree::LeafEntry, u32, usize)> = None;
+
+    loop {
+        let page = if let Some(cached) = engine.cache.get(&path.to_string_lossy(), current_page) {
+            cached
+        } else {
+            let page = f.read_page(current_page)?;
+            engine.cache.put(&path.to_string_lossy(), page.clone(), false);
+            page
+        };
+
+        let node = IndexNode::from_bytes(current_page, &page.data, key_spec.clone())?;
+
+        if node.is_leaf() {
+            // Find last entry < search_key
+            for (idx, entry) in node.leaf_entries.iter().enumerate().rev() {
+                if entry.key.as_slice() < search_key.as_slice() {
+                    best_entry = Some((entry.clone(), current_page, idx));
+                    break;
+                }
+            }
+
+            // If we found an entry, use it; otherwise try previous sibling
+            if best_entry.is_some() {
+                break;
+            }
+
+            if node.prev_sibling == 0 {
+                return Err(BtrieveError::Status(StatusCode::KeyNotFound));
+            }
+            current_page = node.prev_sibling;
+        } else {
+            // Internal node - find child to descend into
+            current_page = node.find_child(search_key);
+        }
+    }
+
+    if let Some((entry, leaf_page, idx)) = best_entry {
+        // Btrieve 5.1: Check if record is locked by another session's transaction
+        if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+            return Err(BtrieveError::Status(StatusCode::RecordInUse));
+        }
+
+        drop(f);
+        let record_data = read_record(engine, &path, entry.record_address)?;
+
+        let mut cursor = Cursor::new(path, req.key_number);
+        cursor.position_with_leaf(
+            entry.record_address,
+            entry.key.clone(),
+            record_data.clone(),
+            leaf_page,
+            idx,
+        );
+        let position = PositionBlock::from_cursor(&cursor);
+
+        return Ok(OperationResponse::success()
+            .with_data(record_data)
+            .with_key(entry.key.clone())
+            .with_position(position.data.to_vec()));
+    }
+
+    Err(BtrieveError::Status(StatusCode::KeyNotFound))
 }
 
-/// Operation 11: Get Less or Equal
+/// Operation 11: Get Less or Equal - get last record with key <= search key
 pub fn get_less_or_equal(
-    _engine: &Engine,
-    _session: SessionId,
-    _req: &OperationRequest,
+    engine: &Engine,
+    session: SessionId,
+    req: &OperationRequest,
 ) -> BtrieveResult<OperationResponse> {
-    // TODO: Implement
-    Err(BtrieveError::Status(StatusCode::InvalidOperation))
+    // Try exact match first
+    match get_equal(engine, session, req) {
+        Ok(response) => Ok(response),
+        Err(_) => get_less_than(engine, session, req),
+    }
 }
 
 /// Operation 12: Get First - get first record in key order
@@ -475,6 +634,11 @@ pub fn get_first(
 
         if node.is_leaf() {
             if let Some(entry) = node.first_entry() {
+                // Btrieve 5.1: Check if record is locked by another session's transaction
+                if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+                    return Err(BtrieveError::Status(StatusCode::RecordInUse));
+                }
+
                 drop(f);
                 let record_data = read_record(engine, &path, entry.record_address)?;
 
@@ -545,6 +709,11 @@ pub fn get_last(
 
         if node.is_leaf() {
             if let Some(entry) = node.last_entry() {
+                // Btrieve 5.1: Check if record is locked by another session's transaction
+                if engine.locks.is_record_locked(&path.to_string_lossy(), entry.record_address, session) {
+                    return Err(BtrieveError::Status(StatusCode::RecordInUse));
+                }
+
                 let last_index = node.leaf_entries.len() - 1;
                 drop(f);
                 let record_data = read_record(engine, &path, entry.record_address)?;

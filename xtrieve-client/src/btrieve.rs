@@ -2,8 +2,7 @@
 //!
 //! This module provides a familiar API for developers who have used Btrieve.
 
-use crate::client::XtrieveClient;
-use crate::proto::{BtrieveRequest, FileSpec, KeySpec, KeyType};
+use crate::client::{XtrieveClient, BtrieveRequest};
 use xtrieve_engine::{BtrieveError, BtrieveResult, StatusCode};
 
 /// Operation codes (matching Btrieve)
@@ -54,7 +53,7 @@ pub struct BtrieveFile {
 
 impl BtrieveFile {
     /// Open a Btrieve file
-    pub async fn open(mut client: XtrieveClient, path: &str, mode: i32) -> BtrieveResult<Self> {
+    pub fn open(mut client: XtrieveClient, path: &str, mode: i32) -> BtrieveResult<Self> {
         let request = BtrieveRequest {
             operation_code: op::OPEN,
             file_path: path.to_string(),
@@ -62,7 +61,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = client.execute(request).await?;
+        let response = client.execute(request)?;
 
         Ok(BtrieveFile {
             client,
@@ -73,7 +72,7 @@ impl BtrieveFile {
     }
 
     /// Close the file
-    pub async fn close(mut self) -> BtrieveResult<()> {
+    pub fn close(mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::CLOSE,
             position_block: self.position_block.clone(),
@@ -81,12 +80,12 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        self.client.execute(request).await?;
+        self.client.execute(request)?;
         Ok(())
     }
 
     /// Insert a record
-    pub async fn insert(&mut self, data: &[u8]) -> BtrieveResult<()> {
+    pub fn insert(&mut self, data: &[u8]) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::INSERT,
             position_block: self.position_block.clone(),
@@ -95,13 +94,13 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
         Ok(())
     }
 
     /// Update the current record
-    pub async fn update(&mut self, data: &[u8]) -> BtrieveResult<()> {
+    pub fn update(&mut self, data: &[u8]) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::UPDATE,
             position_block: self.position_block.clone(),
@@ -110,20 +109,20 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
         Ok(())
     }
 
     /// Delete the current record
-    pub async fn delete(&mut self) -> BtrieveResult<()> {
+    pub fn delete(&mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::DELETE,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
         Ok(())
     }
@@ -134,7 +133,7 @@ impl BtrieveFile {
     }
 
     /// Get Equal - find record by exact key match
-    pub async fn get_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_EQUAL,
             position_block: self.position_block.clone(),
@@ -144,7 +143,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -154,7 +153,7 @@ impl BtrieveFile {
     }
 
     /// Get Next - get next record in key order
-    pub async fn get_next(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_next(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_NEXT,
             position_block: self.position_block.clone(),
@@ -162,7 +161,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -172,7 +171,7 @@ impl BtrieveFile {
     }
 
     /// Get Previous - get previous record in key order
-    pub async fn get_previous(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_previous(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_PREVIOUS,
             position_block: self.position_block.clone(),
@@ -180,7 +179,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -190,7 +189,7 @@ impl BtrieveFile {
     }
 
     /// Get First - get first record in key order
-    pub async fn get_first(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_first(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_FIRST,
             position_block: self.position_block.clone(),
@@ -198,7 +197,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -208,7 +207,7 @@ impl BtrieveFile {
     }
 
     /// Get Last - get last record in key order
-    pub async fn get_last(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_last(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_LAST,
             position_block: self.position_block.clone(),
@@ -216,7 +215,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -226,7 +225,7 @@ impl BtrieveFile {
     }
 
     /// Get Greater - get first record with key greater than given
-    pub async fn get_greater(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_greater(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_GREATER,
             position_block: self.position_block.clone(),
@@ -236,7 +235,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -246,7 +245,7 @@ impl BtrieveFile {
     }
 
     /// Get Greater or Equal
-    pub async fn get_greater_or_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
+    pub fn get_greater_or_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::GET_GE,
             position_block: self.position_block.clone(),
@@ -256,7 +255,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -266,14 +265,14 @@ impl BtrieveFile {
     }
 
     /// Step First - get first record physically
-    pub async fn step_first(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn step_first(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::STEP_FIRST,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -283,14 +282,14 @@ impl BtrieveFile {
     }
 
     /// Step Next - get next record physically
-    pub async fn step_next(&mut self) -> BtrieveResult<BtrieveRecord> {
+    pub fn step_next(&mut self) -> BtrieveResult<BtrieveRecord> {
         let request = BtrieveRequest {
             operation_code: op::STEP_NEXT,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
         self.position_block = response.position_block;
 
         Ok(BtrieveRecord {
@@ -300,7 +299,7 @@ impl BtrieveFile {
     }
 
     /// Get file statistics
-    pub async fn stat(&mut self) -> BtrieveResult<FileStatistics> {
+    pub fn stat(&mut self) -> BtrieveResult<FileStatistics> {
         let request = BtrieveRequest {
             operation_code: op::STAT,
             position_block: self.position_block.clone(),
@@ -308,7 +307,7 @@ impl BtrieveFile {
             ..Default::default()
         };
 
-        let response = self.client.execute(request).await?;
+        let response = self.client.execute(request)?;
 
         // Parse statistics from data buffer
         let data = &response.data_buffer;
@@ -325,38 +324,38 @@ impl BtrieveFile {
     }
 
     /// Begin transaction
-    pub async fn begin_transaction(&mut self) -> BtrieveResult<()> {
+    pub fn begin_transaction(&mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::BEGIN_TRANSACTION,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        self.client.execute(request).await?;
+        self.client.execute(request)?;
         Ok(())
     }
 
     /// End (commit) transaction
-    pub async fn end_transaction(&mut self) -> BtrieveResult<()> {
+    pub fn end_transaction(&mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::END_TRANSACTION,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        self.client.execute(request).await?;
+        self.client.execute(request)?;
         Ok(())
     }
 
     /// Abort (rollback) transaction
-    pub async fn abort_transaction(&mut self) -> BtrieveResult<()> {
+    pub fn abort_transaction(&mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::ABORT_TRANSACTION,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
 
-        self.client.execute(request).await?;
+        self.client.execute(request)?;
         Ok(())
     }
 }
@@ -371,7 +370,7 @@ pub struct FileStatistics {
 }
 
 /// Create a new Btrieve file
-pub async fn create_file(
+pub fn create_file(
     mut client: XtrieveClient,
     path: &str,
     record_length: u16,
@@ -405,7 +404,7 @@ pub async fn create_file(
         ..Default::default()
     };
 
-    client.execute(request).await?;
+    client.execute(request)?;
     Ok(())
 }
 

@@ -1,17 +1,18 @@
 //! Open file table - manages Btrieve files that are currently open
 //!
 //! Each open file has associated metadata, page cache entries, and cursors.
+//! Supports pre-imaging for transaction rollback.
 
 use parking_lot::RwLock;
-use std::collections::HashMap;
-use std::fs::{File, OpenOptions};
+use std::collections::{HashMap, HashSet};
+use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use crate::error::{BtrieveError, BtrieveResult, StatusCode};
 use crate::storage::fcr::FileControlRecord;
-use crate::storage::page::{Page, PageIO, PageType};
+use crate::storage::page::Page;
 
 /// Open mode flags (match Btrieve)
 #[derive(Debug, Clone, Copy)]
@@ -50,6 +51,15 @@ impl OpenMode {
     }
 }
 
+/// Per-session pre-image for transaction rollback (Btrieve 5.1 style)
+/// Stores OLD page data before modification - for restore on abort
+struct SessionPreImage {
+    /// The pre-image file handle
+    file: File,
+    /// Pages that have been pre-imaged (to avoid duplicates)
+    pages: HashSet<u32>,
+}
+
 /// An open Btrieve file
 pub struct OpenFile {
     /// File path
@@ -62,6 +72,9 @@ pub struct OpenFile {
     file: RwLock<File>,
     /// Reference count (number of opens)
     pub ref_count: u32,
+    /// Per-session pre-image files for transaction rollback
+    /// Key: session_id, Value: pre-image file storing OLD data
+    session_preimages: RwLock<HashMap<u64, SessionPreImage>>,
 }
 
 impl OpenFile {
@@ -111,6 +124,7 @@ impl OpenFile {
             mode,
             file: RwLock::new(file),
             ref_count: 1,
+            session_preimages: RwLock::new(HashMap::new()),
         })
     }
 
@@ -139,6 +153,7 @@ impl OpenFile {
             mode: OpenMode::read_write(),
             file: RwLock::new(file),
             ref_count: 1,
+            session_preimages: RwLock::new(HashMap::new()),
         })
     }
 
@@ -146,27 +161,64 @@ impl OpenFile {
     pub fn read_page(&self, page_number: u32) -> BtrieveResult<Page> {
         let mut file = self.file.write();
         let offset = (page_number as u64) * (self.fcr.page_size as u64);
-
         file.seek(SeekFrom::Start(offset))?;
 
         let mut data = vec![0u8; self.fcr.page_size as usize];
-        file.read_exact(&mut data).map_err(|e| {
-            if e.kind() == io::ErrorKind::UnexpectedEof {
-                BtrieveError::Status(StatusCode::InvalidRecordAddress)
-            } else {
-                BtrieveError::Io(e)
-            }
-        })?;
+        file.read_exact(&mut data)?;
 
         Ok(Page::from_data(page_number, data))
     }
 
-    /// Write a page to the file
+    /// Write a page - Btrieve 5.1 style
+    /// If in transaction: save OLD data to .PRE first, then write to main file
+    /// Outside transaction: write directly to main file
     pub fn write_page(&self, page: &Page) -> BtrieveResult<()> {
+        self.write_page_for_session(page, 0)
+    }
+
+    /// Write a page for a specific session
+    /// Btrieve 5.1 model: save old data to PRE, then write new data to main file
+    pub fn write_page_for_session(&self, page: &Page, session_id: u64) -> BtrieveResult<()> {
         if self.mode.read_only {
             return Err(BtrieveError::Status(StatusCode::AccessDenied));
         }
 
+        // Check if this session has an active transaction
+        let has_preimage = {
+            let preimages = self.session_preimages.read();
+            preimages.contains_key(&session_id)
+        };
+
+        // During transaction: save OLD page to PRE before modifying
+        if has_preimage && session_id > 0 {
+            let mut preimages = self.session_preimages.write();
+            if let Some(preimage) = preimages.get_mut(&session_id) {
+                // Only save pre-image once per page (first modification wins)
+                if !preimage.pages.contains(&page.page_number) {
+                    // Read current (old) page data from main file
+                    let mut file = self.file.write();
+                    let offset = (page.page_number as u64) * (self.fcr.page_size as u64);
+
+                    // Check if page exists (might be new allocation)
+                    let file_len = file.seek(SeekFrom::End(0))?;
+                    if offset < file_len {
+                        file.seek(SeekFrom::Start(offset))?;
+                        let mut old_data = vec![0u8; self.fcr.page_size as usize];
+                        file.read_exact(&mut old_data)?;
+
+                        // Write old data to PRE file
+                        preimage.file.seek(SeekFrom::End(0))?;
+                        preimage.file.write_all(&page.page_number.to_le_bytes())?;
+                        preimage.file.write_all(&(old_data.len() as u32).to_le_bytes())?;
+                        preimage.file.write_all(&old_data)?;
+                        preimage.file.flush()?;
+                    }
+                    preimage.pages.insert(page.page_number);
+                }
+            }
+        }
+
+        // Write new data directly to main file (Btrieve 5.1 style)
         let mut file = self.file.write();
         let offset = (page.page_number as u64) * (self.fcr.page_size as u64);
 
@@ -219,6 +271,126 @@ impl OpenFile {
         let fcr_data = self.fcr.to_bytes();
         let page = Page::from_data(0, fcr_data);
         self.write_page(&page)
+    }
+
+    /// Get pre-image file path for a session
+    fn preimage_path(&self, session_id: u64) -> PathBuf {
+        let mut path = self.path.clone();
+        let ext = format!("PRE.{}", session_id);
+        path.set_extension(ext);
+        path
+    }
+
+    /// Begin a transaction for a specific session - create PRE file
+    /// Btrieve 5.1: PRE stores OLD data for rollback
+    pub fn begin_transaction(&self, session_id: u64) -> BtrieveResult<()> {
+        let mut preimages = self.session_preimages.write();
+
+        // Check if session already has a transaction
+        if preimages.contains_key(&session_id) {
+            return Ok(()); // Already in transaction
+        }
+
+        // Create per-session pre-image file
+        let pre_path = self.preimage_path(session_id);
+        let pre_file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(&pre_path)?;
+
+        preimages.insert(session_id, SessionPreImage {
+            file: pre_file,
+            pages: HashSet::new(),
+        });
+
+        Ok(())
+    }
+
+    /// Commit transaction - just delete PRE file
+    /// Btrieve 5.1: changes already written to main file, PRE no longer needed
+    pub fn commit_transaction(&self, session_id: u64) -> BtrieveResult<()> {
+        let mut preimages = self.session_preimages.write();
+
+        // Remove session's pre-image
+        if preimages.remove(&session_id).is_some() {
+            // Sync main file
+            let file = self.file.write();
+            file.sync_all()?;
+
+            // Delete PRE file - changes are committed
+            let pre_path = self.preimage_path(session_id);
+            let _ = fs::remove_file(&pre_path);
+        }
+
+        Ok(())
+    }
+
+    /// Abort transaction - restore pages from PRE to main file
+    /// Btrieve 5.1: PRE contains OLD data, restore it to undo changes
+    pub fn abort_transaction(&self, session_id: u64) -> BtrieveResult<()> {
+        let mut preimages = self.session_preimages.write();
+
+        // Get and remove session's pre-image
+        let preimage = match preimages.remove(&session_id) {
+            Some(p) => p,
+            None => return Ok(()), // Not in transaction
+        };
+
+        let SessionPreImage { mut file, pages: _ } = preimage;
+
+        // Restore all pages from PRE to main file
+        file.seek(SeekFrom::Start(0))?;
+        let mut main_file = self.file.write();
+
+        loop {
+            // Read page_number (4 bytes)
+            let mut page_num_buf = [0u8; 4];
+            if file.read_exact(&mut page_num_buf).is_err() {
+                break; // End of file
+            }
+            let page_number = u32::from_le_bytes(page_num_buf);
+
+            // Read data_len (4 bytes)
+            let mut len_buf = [0u8; 4];
+            if file.read_exact(&mut len_buf).is_err() {
+                break;
+            }
+            let data_len = u32::from_le_bytes(len_buf) as usize;
+
+            // Read original (old) data
+            let mut old_data = vec![0u8; data_len];
+            if file.read_exact(&mut old_data).is_err() {
+                break;
+            }
+
+            // Restore original page to main file
+            let offset = (page_number as u64) * (self.fcr.page_size as u64);
+            main_file.seek(SeekFrom::Start(offset))?;
+            main_file.write_all(&old_data)?;
+        }
+
+        main_file.sync_all()?;
+        drop(main_file);
+
+        // Delete PRE file
+        let pre_path = self.preimage_path(session_id);
+        let _ = fs::remove_file(&pre_path);
+
+        Ok(())
+    }
+
+    /// Check if a specific session has an active transaction
+    pub fn is_in_transaction(&self, session_id: u64) -> bool {
+        let preimages = self.session_preimages.read();
+        preimages.contains_key(&session_id)
+    }
+
+    /// Check if any session has an active transaction
+    pub fn has_active_transactions(&self) -> bool {
+        let preimages = self.session_preimages.read();
+        !preimages.is_empty()
     }
 }
 

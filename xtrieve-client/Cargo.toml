@@ -7,12 +7,42 @@ description = "Client library for Xtrieve - Btrieve 5.1 compatible API"
 
 [dependencies]
 xtrieve-engine.workspace = true
-tokio.workspace = true
-tonic.workspace = true
-prost.workspace = true
-thiserror.workspace = true
-tracing.workspace = true
-bytes.workspace = true
 
-[build-dependencies]
-tonic-build = "0.12"
+# For examples
+tokio = { workspace = true, optional = true }
+reqwest = { version = "0.12", features = ["json"], optional = true }
+serde_json = { version = "1.0", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+chrono = { version = "0.4", optional = true }
+axum = { version = "0.7", optional = true }
+tower-http = { version = "0.5", features = ["cors"], optional = true }
+
+[features]
+async = ["tokio"]
+examples = ["async", "tokio", "reqwest", "serde_json", "serde", "chrono", "axum", "tower-http"]
+
+[[example]]
+name = "test_all_operations"
+path = "examples/test_all_operations.rs"
+
+[[example]]
+name = "create_and_insert"
+path = "examples/create_and_insert.rs"
+
+[[example]]
+name = "debug_insert"
+path = "examples/debug_insert.rs"
+
+[[example]]
+name = "weather_telemetry"
+path = "examples/weather_telemetry.rs"
+required-features = ["examples"]
+
+[[example]]
+name = "weather_web"
+path = "examples/weather_web.rs"
+required-features = ["examples"]
+
+[[example]]
+name = "test_isolation"
+path = "examples/test_isolation.rs"

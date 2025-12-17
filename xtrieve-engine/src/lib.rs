@@ -7,5 +7,7 @@ pub mod error;
 pub mod storage;
 pub mod file_manager;
 pub mod operations;
+pub mod protocol;
 
 pub use error::{BtrieveError, BtrieveResult, StatusCode};
+pub use protocol::{Request, Response, POSITION_BLOCK_SIZE, DEFAULT_PORT};

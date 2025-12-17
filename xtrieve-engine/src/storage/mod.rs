@@ -6,15 +6,18 @@
 //! - Key specifications
 //! - B+ tree index structures
 //! - Record management
+//! - Separated file management (.DAT, .IX#, .PRE)
 
 pub mod page;
 pub mod fcr;
 pub mod key;
 pub mod record;
 pub mod btree;
+pub mod files;
 
 pub use page::{Page, PageType, PAGE_SIZES};
 pub use fcr::FileControlRecord;
 pub use key::{KeySpec, KeyType, KeyFlags};
 pub use record::Record;
 pub use btree::BTree;
+pub use files::{BtrieveFileSet, IndexFileHeader, PreImageRecord, PreImageHeader};

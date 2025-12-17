@@ -5,10 +5,8 @@
 pub mod client;
 pub mod btrieve;
 
-pub use client::XtrieveClient;
+pub use client::{XtrieveClient, BtrieveRequest, BtrieveResponse};
+#[cfg(feature = "async")]
+pub use client::AsyncXtrieveClient;
 pub use btrieve::{BtrieveFile, BtrieveRecord};
 pub use xtrieve_engine::{BtrieveError, BtrieveResult, StatusCode};
-
-pub mod proto {
-    tonic::include_proto!("xtrieve");
-}

@@ -190,12 +190,18 @@ impl PositionBlock {
         block.data[11..15].copy_from_slice(&cursor.leaf_page.to_le_bytes());
         block.data[15..19].copy_from_slice(&(cursor.leaf_index as u32).to_le_bytes());
 
-        // Store key value (truncated if too long)
-        let key_len = cursor.key_value.len().min(100);
+        // Store key value (truncated if too long) - but leave room for file path at 64
+        let key_len = cursor.key_value.len().min(43); // Max 43 bytes for key (21..64)
         block.data[20] = key_len as u8;
         if key_len > 0 {
             block.data[21..21 + key_len].copy_from_slice(&cursor.key_value[..key_len]);
         }
+
+        // Store file path at offset 64 (up to 64 bytes)
+        let path_str = cursor.file_path.to_string_lossy();
+        let path_bytes = path_str.as_bytes();
+        let path_len = path_bytes.len().min(64);
+        block.data[64..64 + path_len].copy_from_slice(&path_bytes[..path_len]);
 
         block
     }
@@ -275,6 +281,19 @@ impl PositionBlock {
         let len = data.len().min(128);
         block.data[..len].copy_from_slice(&data[..len]);
         block
+    }
+
+    /// Set session/client ID in position block (bytes 120-127)
+    pub fn set_session_id(&mut self, session_id: u64) {
+        self.data[120..128].copy_from_slice(&session_id.to_le_bytes());
+    }
+
+    /// Get session/client ID from position block
+    pub fn get_session_id(&self) -> u64 {
+        u64::from_le_bytes([
+            self.data[120], self.data[121], self.data[122], self.data[123],
+            self.data[124], self.data[125], self.data[126], self.data[127],
+        ])
     }
 }
 

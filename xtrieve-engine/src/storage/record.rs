@@ -311,6 +311,138 @@ impl DataPage {
     pub fn to_bytes(&self) -> Vec<u8> {
         self.data.clone()
     }
+
+    /// Create a new empty data page
+    pub fn new(page_number: u32, page_size: u16) -> Self {
+        let mut data = vec![0u8; page_size as usize];
+
+        // Page header
+        data[0] = 0x02; // Data page type
+        data[1] = 0x00; // Reserved
+        // slot_count at [2..4] = 0
+        // next_page at [4..8] = 0
+        // prev_page at [8..12] = 0
+
+        // Free space = page_size - header
+        let free_space = page_size - Self::HEADER_SIZE as u16;
+        data[14..16].copy_from_slice(&free_space.to_le_bytes());
+
+        DataPage {
+            page_number,
+            page_size,
+            next_page: 0,
+            prev_page: 0,
+            slot_count: 0,
+            free_space,
+            slots: Vec::new(),
+            data,
+        }
+    }
+
+    /// Insert a record into this page
+    /// Returns the slot number, or None if record doesn't fit
+    pub fn insert_record(&mut self, record_data: &[u8]) -> Option<u16> {
+        let record_len = record_data.len() as u16;
+        let needed_space = record_len + SlotEntry::SIZE as u16;
+
+        if self.free_space < needed_space {
+            return None;
+        }
+
+        // Find where to put the record data
+        // Records grow from after header, slots grow backward from end
+        let slot_dir_start = self.page_size as usize - ((self.slot_count + 1) as usize * SlotEntry::SIZE);
+        let data_end = if self.slots.is_empty() {
+            Self::HEADER_SIZE
+        } else {
+            // Find the end of last record
+            self.slots.iter()
+                .filter(|s| s.is_in_use())
+                .map(|s| s.offset as usize + s.length as usize)
+                .max()
+                .unwrap_or(Self::HEADER_SIZE)
+        };
+
+        // Check there's room
+        if data_end + record_len as usize > slot_dir_start {
+            return None;
+        }
+
+        // Write record data
+        let record_offset = data_end;
+        self.data[record_offset..record_offset + record_len as usize].copy_from_slice(record_data);
+
+        // Create slot entry
+        let slot = SlotEntry {
+            offset: record_offset as u16,
+            length: record_len,
+            flags: SlotEntry::FLAG_IN_USE,
+        };
+
+        let slot_num = self.slot_count;
+        self.slots.push(slot);
+        self.slot_count += 1;
+
+        // Write slot to slot directory
+        let slot_offset = self.page_size as usize - (self.slot_count as usize * SlotEntry::SIZE);
+        let slot_bytes = slot.to_bytes();
+        self.data[slot_offset..slot_offset + SlotEntry::SIZE].copy_from_slice(&slot_bytes);
+
+        // Update header
+        self.free_space -= needed_space;
+        self.data[2..4].copy_from_slice(&self.slot_count.to_le_bytes());
+        self.data[14..16].copy_from_slice(&self.free_space.to_le_bytes());
+
+        Some(slot_num)
+    }
+
+    /// Mark a record as deleted
+    pub fn delete_record(&mut self, slot: u16) -> bool {
+        if let Some(entry) = self.slots.get_mut(slot as usize) {
+            if entry.is_in_use() && !entry.is_deleted() {
+                entry.flags |= SlotEntry::FLAG_DELETED;
+                // Update in page data
+                let slot_offset = self.page_size as usize - ((slot as usize + 1) * SlotEntry::SIZE);
+                self.data[slot_offset + 4] = entry.flags;
+                // Add space back to free (could reclaim more with compaction)
+                self.free_space += entry.length;
+                self.data[14..16].copy_from_slice(&self.free_space.to_le_bytes());
+                return true;
+            }
+        }
+        false
+    }
+
+    /// Update record in place (must be same length or smaller)
+    pub fn update_record(&mut self, slot: u16, record_data: &[u8]) -> bool {
+        if let Some(entry) = self.slots.get(slot as usize) {
+            if entry.is_in_use() && !entry.is_deleted() {
+                if record_data.len() <= entry.length as usize {
+                    let start = entry.offset as usize;
+                    self.data[start..start + record_data.len()].copy_from_slice(record_data);
+                    // Pad with zeros if new record is shorter
+                    if record_data.len() < entry.length as usize {
+                        let end = start + entry.length as usize;
+                        self.data[start + record_data.len()..end].fill(0);
+                    }
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /// Set next page pointer
+    pub fn set_next_page(&mut self, page: u32) {
+        self.next_page = page;
+        self.data[4..8].copy_from_slice(&page.to_le_bytes());
+    }
+
+    /// Set previous page pointer
+    pub fn set_prev_page(&mut self, page: u32) {
+        self.prev_page = page;
+        self.data[8..12].copy_from_slice(&page.to_le_bytes());
+    }
 }
 
 #[cfg(test)]

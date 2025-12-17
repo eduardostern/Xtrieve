@@ -312,6 +312,7 @@ impl Engine {
             OperationCode::EndTransaction => self.op_end_transaction(session, &request),
             OperationCode::AbortTransaction => self.op_abort_transaction(session, &request),
             OperationCode::Reset => self.op_reset(session, &request),
+            OperationCode::GetByPercentage => self.op_version(session, &request), // Op 26 is Version
             OperationCode::Unknown => Err(BtrieveError::Status(StatusCode::InvalidOperation)),
             _ => Err(BtrieveError::Status(StatusCode::InvalidOperation)),
         };
@@ -442,6 +443,18 @@ impl Engine {
     fn op_reset(&self, _session: SessionId, _req: &OperationRequest) -> BtrieveResult<OperationResponse> {
         // Reset operation - typically does nothing in modern implementations
         Ok(OperationResponse::success())
+    }
+
+    fn op_version(&self, _session: SessionId, _req: &OperationRequest) -> BtrieveResult<OperationResponse> {
+        // Version operation (26) - return Btrieve version info
+        // Format: major (2 bytes), minor (2 bytes), revision (1 byte), type (1 byte)
+        let mut data = vec![0u8; 6];
+        data[0..2].copy_from_slice(&5u16.to_le_bytes());  // major = 5
+        data[2..4].copy_from_slice(&10u16.to_le_bytes()); // minor = 10
+        data[4] = 0; // revision
+        data[5] = b'N'; // type: N = NetWare, W = Windows, D = DOS
+
+        Ok(OperationResponse::success().with_data(data))
     }
 }
 

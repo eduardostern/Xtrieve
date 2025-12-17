@@ -78,8 +78,6 @@ pub fn begin_transaction(
         transactions.insert(session, transaction);
     }
 
-    // TODO: Create pre-image file for rollback support
-
     Ok(OperationResponse::success())
 }
 
@@ -96,28 +94,21 @@ pub fn end_transaction(
             .ok_or(BtrieveError::Status(StatusCode::TransactionError))?
     };
 
-    // Flush all dirty pages for files in transaction
+    // Commit transaction on all files (applies WAL to main file)
     for file_path in &transaction.files {
-        let path_str = file_path.to_string_lossy();
-
-        // Get dirty pages from cache
-        let dirty_pages = engine.cache.get_dirty_pages(&path_str);
-
-        // Write dirty pages
         if let Some(file) = engine.files.get(file_path) {
             let f = file.read();
-            for page in dirty_pages {
-                f.write_page(&page)?;
-                engine.cache.clear_dirty(&path_str, page.page_number);
-            }
-            f.flush()?;
+            f.commit_transaction(session)?;
         }
+    }
+
+    // Invalidate cache for transaction files to ensure fresh reads
+    for file_path in &transaction.files {
+        engine.cache.invalidate_file(&file_path.to_string_lossy());
     }
 
     // Release all locks held by session
     engine.locks.release_session(session);
-
-    // TODO: Delete pre-image file
 
     Ok(OperationResponse::success())
 }
@@ -135,32 +126,35 @@ pub fn abort_transaction(
             .ok_or(BtrieveError::Status(StatusCode::TransactionError))?
     };
 
-    // Invalidate dirty pages (don't write them)
+    // Abort all files - just delete WAL (main file was never modified)
     for file_path in &transaction.files {
-        let path_str = file_path.to_string_lossy();
+        if let Some(file) = engine.files.get(file_path) {
+            let f = file.read();
+            f.abort_transaction(session)?;
+        }
 
-        // Get dirty pages and discard them
-        let dirty_pages = engine.cache.invalidate_file(&path_str);
-
-        // TODO: Restore from pre-image file
-        // For now, we just discard the dirty pages which effectively
-        // rolls back changes that weren't flushed
+        // Invalidate cache for this file to ensure fresh reads after rollback
+        engine.cache.invalidate_file(&file_path.to_string_lossy());
     }
 
     // Release all locks held by session
     engine.locks.release_session(session);
 
-    // TODO: Delete pre-image file
-
     Ok(OperationResponse::success())
 }
 
-/// Helper: Add file to current transaction
-pub fn add_file_to_transaction(session: SessionId, file_path: PathBuf) {
+/// Helper: Add file to current transaction and create per-session WAL
+pub fn add_file_to_transaction(engine: &Engine, session: SessionId, file_path: PathBuf) {
     let mut transactions = TRANSACTIONS.write();
     if let Some(transaction) = transactions.get_mut(&session) {
         if !transaction.files.contains(&file_path) {
-            transaction.files.push(file_path);
+            transaction.files.push(file_path.clone());
+
+            // Create per-session WAL for this file
+            if let Some(file) = engine.files.get(&file_path) {
+                let f = file.read();
+                let _ = f.begin_transaction(session);
+            }
         }
     }
 }
@@ -175,4 +169,26 @@ pub fn has_transaction(session: SessionId) -> bool {
 pub fn get_transaction_mode(session: SessionId) -> Option<TransactionMode> {
     let transactions = TRANSACTIONS.read();
     transactions.get(&session).map(|t| t.mode)
+}
+
+/// Check if a file is locked by another session's transaction (for ACID isolation)
+pub fn is_file_in_transaction(file_path: &PathBuf, requesting_session: SessionId) -> bool {
+    let transactions = TRANSACTIONS.read();
+    for (session, transaction) in transactions.iter() {
+        if *session != requesting_session && transaction.files.contains(file_path) {
+            return true;
+        }
+    }
+    false
+}
+
+/// Get the session that has a transaction lock on a file
+pub fn get_transaction_owner(file_path: &PathBuf) -> Option<SessionId> {
+    let transactions = TRANSACTIONS.read();
+    for (session, transaction) in transactions.iter() {
+        if transaction.files.contains(file_path) {
+            return Some(*session);
+        }
+    }
+    None
 }

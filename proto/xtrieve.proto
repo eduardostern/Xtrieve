@@ -50,6 +50,9 @@ message BtrieveRequest {
 
   // Lock bias: 0=no lock, 100=single wait, 200=single no-wait, 300=multi wait, 400=multi no-wait
   int32 lock_bias = 11;
+
+  // Client session ID (for multi-client support, 0 = auto-assign)
+  uint64 client_id = 12;
 }
 
 // Response message - returns operation result
