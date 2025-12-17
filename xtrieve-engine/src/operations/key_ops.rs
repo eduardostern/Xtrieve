@@ -28,6 +28,7 @@ fn get_file_path(position_block: &[u8]) -> Option<PathBuf> {
 }
 
 /// Helper to read a record given its address
+/// In Btrieve 5.1, address.slot contains the absolute file offset to the record
 fn read_record(
     engine: &Engine,
     file_path: &PathBuf,
@@ -38,22 +39,32 @@ fn read_record(
 
     let f = file.read();
 
-    // Try cache first
-    let page = if let Some(cached) = engine.cache.get(&file_path.to_string_lossy(), address.page) {
+    // Btrieve 5.1: address.slot contains absolute file offset to record data
+    // Calculate which page contains this offset
+    let file_offset = address.slot as u64;
+    let page_size = f.fcr.page_size as u64;
+    let page_number = (file_offset / page_size) as u32;
+    let offset_in_page = (file_offset % page_size) as usize;
+
+    // Read the page containing the record
+    let page = if let Some(cached) = engine.cache.get(&file_path.to_string_lossy(), page_number) {
         cached
     } else {
-        let page = f.read_page(address.page)?;
+        let page = f.read_page(page_number)?;
         engine.cache.put(&file_path.to_string_lossy(), page.clone(), false);
         page
     };
 
-    // Parse data page
-    let data_page = DataPage::from_bytes(address.page, page.data)?;
+    // Extract record data from the page at the calculated offset
+    // Record format in Btrieve 5.1: record data starts at file_offset
+    let record_length = f.fcr.record_length as usize;
 
-    // Get record from slot
-    data_page.get_record(address.slot)
-        .map(|r| r.to_vec())
-        .ok_or(BtrieveError::Status(StatusCode::InvalidRecordAddress))
+    if offset_in_page + record_length > page.data.len() {
+        return Err(BtrieveError::Status(StatusCode::InvalidRecordAddress));
+    }
+
+    let record_data = page.data[offset_in_page..offset_in_page + record_length].to_vec();
+    Ok(record_data)
 }
 
 /// Search the B+ tree for a key

@@ -1,18 +1,24 @@
-//! File Control Record (FCR) - Btrieve file header
+//! File Control Record (FCR) - Btrieve 5.1 file header
 //!
 //! The FCR is always stored in page 0 and contains metadata about the file:
 //! - Record length and page size
 //! - Number of records
 //! - Key specifications
 //! - File flags
+//!
+//! Layout based on real DOS Btrieve 5.1 files:
+//! - Offset 0x08: page_size (u16)
+//! - Offset 0x14: num_keys (u16)
+//! - Offset 0x16: record_length (u16)
+//! - Offset 0x1C: num_records (u32)
+//! - Offset 0x20: num_pages (u32)
+//! - Offset 0x24: first_data_page (u32)
+//! - Key specs at offset 0x110 (16 bytes each)
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::{self, Cursor, Write};
 
 use super::key::KeySpec;
-
-/// Btrieve file signature bytes (identifies a valid Btrieve file)
-pub const BTRIEVE_SIGNATURE: [u8; 4] = [0x00, 0x00, 0x00, 0x00]; // Version 5.x has specific pattern
 
 bitflags::bitflags! {
     /// File-level flags stored in FCR
@@ -37,7 +43,7 @@ bitflags::bitflags! {
     }
 }
 
-/// File Control Record - header of a Btrieve file
+/// File Control Record - header of a Btrieve 5.1 file
 #[derive(Debug, Clone)]
 pub struct FileControlRecord {
     /// Fixed record length in bytes
@@ -77,74 +83,76 @@ impl FileControlRecord {
     /// Maximum number of keys
     pub const MAX_KEYS: usize = 24;
 
-    /// Parse FCR from page 0 data
+    /// Key area offset in Btrieve 5.1 FCR
+    const KEY_AREA_OFFSET: usize = 0x110;
+
+    /// Parse FCR from page 0 data (Btrieve 5.1 format)
     pub fn from_bytes(data: &[u8]) -> io::Result<Self> {
-        if data.len() < Self::BASE_SIZE {
+        if data.len() < 0x30 {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidData,
                 "FCR data too short",
             ));
         }
 
-        let mut cursor = Cursor::new(data);
+        // Parse Btrieve 5.1 FCR fields
+        let page_size = u16::from_le_bytes([data[0x08], data[0x09]]);
+        let num_keys = u16::from_le_bytes([data[0x14], data[0x15]]);
+        let record_length = u16::from_le_bytes([data[0x16], data[0x17]]);
+        let num_records = u32::from_le_bytes([data[0x1C], data[0x1D], data[0x1E], data[0x1F]]);
+        let num_pages = u32::from_le_bytes([data[0x20], data[0x21], data[0x22], data[0x23]]);
+        let first_data_page = u32::from_le_bytes([data[0x24], data[0x25], data[0x26], data[0x27]]);
 
-        // Skip page header (12 bytes)
-        cursor.set_position(12);
-
-        // Read FCR fields
-        let record_length = cursor.read_u16::<LittleEndian>()?;
-        let page_size = cursor.read_u16::<LittleEndian>()?;
-        let num_keys = cursor.read_u16::<LittleEndian>()?;
-        let num_records = cursor.read_u32::<LittleEndian>()?;
-        let raw_flags = cursor.read_u16::<LittleEndian>()?;
-        let flags = FileFlags::from_bits_truncate(raw_flags);
-        let _reserved1 = cursor.read_u16::<LittleEndian>()?;
-        let num_pages = cursor.read_u32::<LittleEndian>()?;
-        let unused_pages = cursor.read_u16::<LittleEndian>()?;
-        let _reserved2 = cursor.read_u16::<LittleEndian>()?;
-
-        // Read page pointers
-        let first_data_page = cursor.read_u32::<LittleEndian>()?;
-        let last_data_page = cursor.read_u32::<LittleEndian>()?;
-        let first_free_page = cursor.read_u32::<LittleEndian>()?;
-
-        // Read key specifications
-        let key_offset = 64usize; // Keys start after base FCR
+        // Parse key specifications (start at offset 0x110 in Btrieve 5.1)
         let mut keys = Vec::with_capacity(num_keys as usize);
         let mut index_roots = Vec::with_capacity(num_keys as usize);
         let mut autoincrement_values = Vec::with_capacity(num_keys as usize);
 
         for i in 0..num_keys as usize {
-            let spec_start = key_offset + (i * 24); // Each key spec is 24 bytes in FCR
-            if spec_start + 24 > data.len() {
+            // Key spec layout in Btrieve 5.1 FCR (at KEY_AREA_OFFSET + i*16):
+            // Bytes 0-7: unknown/reserved
+            // Byte 8-9: key_position (u16, 1-based)
+            // Byte 10-11: key_length (u16)
+            // Byte 12-13: key_flags (u16)
+            // Byte 14-15: unknown
+            let spec_start = Self::KEY_AREA_OFFSET + (i * 16);
+            if spec_start + 16 > data.len() {
                 break;
             }
 
-            // Parse key specification (first 16 bytes)
-            let key_spec = KeySpec::from_bytes(&data[spec_start..spec_start + 16])?;
+            let key_position = u16::from_le_bytes([data[spec_start + 8], data[spec_start + 9]]);
+            let key_length = u16::from_le_bytes([data[spec_start + 10], data[spec_start + 11]]);
+            let raw_flags = u16::from_le_bytes([data[spec_start + 12], data[spec_start + 13]]);
+
+            // Convert 1-based position to 0-based
+            let position = if key_position > 0 {
+                key_position - 1
+            } else {
+                0
+            };
+
+            // Convert Btrieve 5.1 flags to our KeyFlags
+            let mut flags = super::key::KeyFlags::empty();
+            if (raw_flags & 0x0001) != 0 {
+                flags |= super::key::KeyFlags::DUPLICATES;
+            }
+            if (raw_flags & 0x0002) != 0 {
+                flags |= super::key::KeyFlags::MODIFIABLE;
+            }
+
+            let key_spec = KeySpec {
+                position,
+                length: key_length,
+                flags,
+                key_type: super::key::KeyType::UnsignedBinary,
+                null_value: 0,
+                acs_number: 0,
+                unique_count: 0,
+            };
+
             keys.push(key_spec);
-
-            // Index root page (4 bytes after key spec)
-            let root_offset = spec_start + 16;
-            if root_offset + 4 <= data.len() {
-                let root = Cursor::new(&data[root_offset..])
-                    .read_u32::<LittleEndian>()
-                    .unwrap_or(0);
-                index_roots.push(root);
-            } else {
-                index_roots.push(0);
-            }
-
-            // Autoincrement value (4 bytes after root)
-            let auto_offset = spec_start + 20;
-            if auto_offset + 4 <= data.len() {
-                let auto_val = Cursor::new(&data[auto_offset..])
-                    .read_u32::<LittleEndian>()
-                    .unwrap_or(0);
-                autoincrement_values.push(auto_val);
-            } else {
-                autoincrement_values.push(0);
-            }
+            index_roots.push(1); // Index root is typically page 1 for Btrieve 5.1
+            autoincrement_values.push(0);
         }
 
         Ok(FileControlRecord {
@@ -152,58 +160,69 @@ impl FileControlRecord {
             page_size,
             num_keys,
             num_records,
-            flags,
+            flags: FileFlags::empty(),
             num_pages,
-            unused_pages,
+            unused_pages: 0,
             keys,
             first_data_page,
-            last_data_page,
-            first_free_page,
+            last_data_page: first_data_page,
+            first_free_page: 0,
             index_roots,
             preimage_file: None,
             autoincrement_values,
         })
     }
 
-    /// Serialize FCR to bytes for writing to page 0
+    /// Serialize FCR to bytes for writing to page 0 (Btrieve 5.1 format)
     pub fn to_bytes(&self) -> Vec<u8> {
-        let key_area_size = self.num_keys as usize * 24;
-        let total_size = Self::BASE_SIZE + key_area_size;
-        let mut buf = vec![0u8; total_size.max(self.page_size as usize)];
+        let mut buf = vec![0u8; self.page_size as usize];
 
-        // Page header (FCR type)
-        buf[0] = 0x00; // FCR page type
+        // Write Btrieve 5.1 FCR header
+        // Offset 0x04: version (10 for Btrieve 5.1)
+        buf[0x04] = 0x0A;
+        buf[0x05] = 0x00;
 
-        // FCR fields at offset 12
-        let mut cursor = Cursor::new(&mut buf[12..]);
-        cursor.write_u16::<LittleEndian>(self.record_length).unwrap();
-        cursor.write_u16::<LittleEndian>(self.page_size).unwrap();
-        cursor.write_u16::<LittleEndian>(self.num_keys).unwrap();
-        cursor.write_u32::<LittleEndian>(self.num_records).unwrap();
-        cursor.write_u16::<LittleEndian>(self.flags.bits()).unwrap();
-        cursor.write_u16::<LittleEndian>(0).unwrap(); // reserved
-        cursor.write_u32::<LittleEndian>(self.num_pages).unwrap();
-        cursor.write_u16::<LittleEndian>(self.unused_pages).unwrap();
-        cursor.write_u16::<LittleEndian>(0).unwrap(); // reserved
-        cursor.write_u32::<LittleEndian>(self.first_data_page).unwrap();
-        cursor.write_u32::<LittleEndian>(self.last_data_page).unwrap();
-        cursor.write_u32::<LittleEndian>(self.first_free_page).unwrap();
+        // Offset 0x08: page_size
+        buf[0x08..0x0A].copy_from_slice(&self.page_size.to_le_bytes());
 
-        // Key specifications
+        // Offset 0x14: num_keys
+        buf[0x14..0x16].copy_from_slice(&self.num_keys.to_le_bytes());
+
+        // Offset 0x16: record_length
+        buf[0x16..0x18].copy_from_slice(&self.record_length.to_le_bytes());
+
+        // Offset 0x1C: num_records
+        buf[0x1C..0x20].copy_from_slice(&self.num_records.to_le_bytes());
+
+        // Offset 0x20: num_pages
+        buf[0x20..0x24].copy_from_slice(&self.num_pages.to_le_bytes());
+
+        // Offset 0x24: first_data_page
+        buf[0x24..0x28].copy_from_slice(&self.first_data_page.to_le_bytes());
+
+        // Write key specifications at offset 0x110
         for (i, key) in self.keys.iter().enumerate() {
-            let spec_start = 64 + (i * 24);
-            let key_bytes = key.to_bytes();
-            buf[spec_start..spec_start + key_bytes.len()].copy_from_slice(&key_bytes);
+            let spec_start = Self::KEY_AREA_OFFSET + (i * 16);
+            if spec_start + 16 > buf.len() {
+                break;
+            }
 
-            // Index root
-            let root_offset = spec_start + 16;
-            let root = self.index_roots.get(i).copied().unwrap_or(0);
-            (&mut buf[root_offset..]).write_u32::<LittleEndian>(root).unwrap();
+            // Key position (1-based)
+            let position = key.position + 1;
+            buf[spec_start + 8..spec_start + 10].copy_from_slice(&position.to_le_bytes());
 
-            // Autoincrement value
-            let auto_offset = spec_start + 20;
-            let auto_val = self.autoincrement_values.get(i).copied().unwrap_or(0);
-            (&mut buf[auto_offset..]).write_u32::<LittleEndian>(auto_val).unwrap();
+            // Key length
+            buf[spec_start + 10..spec_start + 12].copy_from_slice(&key.length.to_le_bytes());
+
+            // Key flags
+            let mut raw_flags: u16 = 0;
+            if key.flags.contains(super::key::KeyFlags::DUPLICATES) {
+                raw_flags |= 0x0001;
+            }
+            if key.flags.contains(super::key::KeyFlags::MODIFIABLE) {
+                raw_flags |= 0x0002;
+            }
+            buf[spec_start + 12..spec_start + 14].copy_from_slice(&raw_flags.to_le_bytes());
         }
 
         buf

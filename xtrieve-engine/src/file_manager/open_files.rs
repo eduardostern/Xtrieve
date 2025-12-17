@@ -99,13 +99,13 @@ impl OpenFile {
             BtrieveError::Status(StatusCode::NotBtrieveFile)
         })?;
 
-        // Page size is at offset 14 (after 12-byte page header + 2-byte record length)
-        let page_size = u16::from_le_bytes([header[14], header[15]]);
+        // Btrieve 5.1: page size is at offset 0x08
+        let page_size = u16::from_le_bytes([header[0x08], header[0x09]]);
 
         // Validate page size
         if !crate::storage::page::PAGE_SIZES.contains(&page_size) {
             return Err(BtrieveError::InvalidFormat(format!(
-                "Invalid page size: {}",
+                "Invalid page size: {} (expected 512, 1024, 2048, or 4096)",
                 page_size
             )));
         }
