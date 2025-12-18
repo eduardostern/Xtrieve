@@ -216,7 +216,10 @@ Result: 656 KB (down from 3.6 MB with gRPC)
 
 ## The Story
 
-This project bridges 30+ years of database history - from BBS systems running Btrieve in 1991 to modern Rust servers in 2025. For the full story, see [docs/STORY.md](docs/STORY.md).
+This project bridges 30+ years of database history - from BBS systems running Btrieve in 1991 to modern Rust servers in 2025.
+
+- [docs/STORY.md](docs/STORY.md) - The journey from BBS era to 2025
+- [docs/FRIENDSHIP.md](docs/FRIENDSHIP.md) - On partnership, Kirk & Spock, and where "no one" has gone before
 
 ---
 
