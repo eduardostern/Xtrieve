@@ -739,8 +739,8 @@
     │     2 Lines. RemoteAccess. Higienópolis, São Paulo.                  │
     │                                                                      │
     │     Co-SysOps:                                                       │
-    │       R - Renato Retz de Carvalho                                    │
-    │       S - Eduardo Stern                                              │
+    │       R - Retz   (Renato Retz de Carvalho)                           │
+    │       S - Stern  (Eduardo Stern)                                     │
     │                                                                      │
     │     Running from Renato's grandmother's apartment.                   │
     │     Hand-coded ANSI menus that looked like DOS, not a terminal.      │
