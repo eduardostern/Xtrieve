@@ -874,7 +874,7 @@
     │     │                                                            │   │
     │     │  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  │   │
     │     │  █  T H E   H O S P I T A L   O F   H O R R O R S        █  │   │
-    │     │  █  São Lucas Hospital, Aracaju - A Cautionary Tale      █  │   │
+    │     │  █  A Large 100-Room Hospital - A Cautionary Tale        █  │   │
     │     │  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  │   │
     │     │                                                            │   │
     │     │  The hospital owner had a son. The son was "good with      │   │
