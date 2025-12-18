@@ -702,6 +702,189 @@
 
 
 
+                    T H E   D I G I T A L   C A M E L Ô
+                     ─────────────────────────────────
+                         1999: The MP3 Revolution
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │     The BBS era was ending. A new era was beginning.                 │
+    │     Napster. Audiogalaxy. Kazaa. Limewire.                           │
+    │     Music wanted to be free. And we were the liberators.             │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │   THE SETUP:                                               │   │
+    │     │                                                            │   │
+    │     │   ┌────────────────────────────────────────────────────┐   │   │
+    │     │   │  ╔══════════════════════════════════════════════╗  │   │   │
+    │     │   │  ║            MEGA TOWER GABINETE               ║  │   │   │
+    │     │   │  ║  ┌──────┐ ┌──────┐ ┌──────┐                  ║  │   │   │
+    │     │   │  ║  │ CD-RW│ │ CD-RW│ │ CD-RW│  ← Burner #1-3   ║  │   │   │
+    │     │   │  ║  │  4x  │ │  4x  │ │  4x  │    (SCSI chain)  ║  │   │   │
+    │     │   │  ║  └──────┘ └──────┘ └──────┘                  ║  │   │   │
+    │     │   │  ║  ┌──────┐ ┌──────┐ ┌──────┐                  ║  │   │   │
+    │     │   │  ║  │ CD-RW│ │ CD-RW│ │ CD-RW│  ← Burner #4-6   ║  │   │   │
+    │     │   │  ║  │  4x  │ │  4x  │ │  4x  │    (IDE chain)   ║  │   │   │
+    │     │   │  ║  └──────┘ └──────┘ └──────┘                  ║  │   │   │
+    │     │   │  ║                                              ║  │   │   │
+    │     │   │  ║  [████████████████████████] 6x HDD array     ║  │   │   │
+    │     │   │  ║                                              ║  │   │   │
+    │     │   │  ║  POWER SUPPLY: 500W                          ║  │   │   │
+    │     │   │  ║  (the real kind, not Paraguay fake)          ║  │   │   │
+    │     │   │  ╚══════════════════════════════════════════════╝  │   │   │
+    │     │   │              │││││││││││││││                       │   │   │
+    │     │   │           CABLES EVERYWHERE                        │   │   │
+    │     │   └────────────────────────────────────────────────────┘   │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     THE PROCESS:                                                     │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  STEP 1: Download all night on 56k                         │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────┐            │   │
+    │     │    │  Napster: Downloading...                 │            │   │
+    │     │    │                                          │            │   │
+    │     │    │  01. Metallica - Enter Sandman.mp3       │            │   │
+    │     │    │      [████████░░░░░░░░░░░░] 42% - 3.2KB/s│            │   │
+    │     │    │      ETA: 47 minutes                     │            │   │
+    │     │    │                                          │            │   │
+    │     │    │  02. Nirvana - Smells Like Teen Spiri... │            │   │
+    │     │    │      [░░░░░░░░░░░░░░░░░░░░] Queued       │            │   │
+    │     │    │                                          │            │   │
+    │     │    │  "Please nobody pick up the phone..."    │            │   │
+    │     │    └──────────────────────────────────────────┘            │   │
+    │     │                                                            │   │
+    │     │  STEP 2: Organize into "Best of 1999" folders              │   │
+    │     │                                                            │   │
+    │     │  STEP 3: Fire up Nero Burning ROM                          │   │
+    │     │                                                            │   │
+    │     │    ╔═══════════════════════════════════════╗               │   │
+    │     │    ║  NERO BURNING ROM 5.5                 ║               │   │
+    │     │    ║  ─────────────────────────────────────║               │   │
+    │     │    ║                                       ║               │   │
+    │     │    ║  [■] Drive D: Plextor PX-W1210A      ║               │   │
+    │     │    ║  [■] Drive E: Plextor PX-W1210A      ║               │   │
+    │     │    ║  [■] Drive F: Yamaha CRW-F1          ║               │   │
+    │     │    ║  [■] Drive G: LG GCE-8400B           ║               │   │
+    │     │    ║  [■] Drive H: Lite-On LTR-24102B     ║               │   │
+    │     │    ║  [■] Drive I: HP CD-Writer+ 9300     ║               │   │
+    │     │    ║                                       ║               │   │
+    │     │    ║  [  BURN 6 COPIES  ]                  ║               │   │
+    │     │    ║                                       ║               │   │
+    │     │    ║  Speed: 4x (buffer underrun = coaster)║               │   │
+    │     │    ╚═══════════════════════════════════════╝               │   │
+    │     │                                                            │   │
+    │     │  STEP 4: Print CD labels on inkjet printer                 │   │
+    │     │                                                            │   │
+    │     │  STEP 5: Sell at school / Galeria Pagé / Santa Ifigênia   │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     THE CREW:                                                        │
+    │                                                                      │
+    │       R&S was done. The BBS era was over. But the partnership        │
+    │       continued. Renato was in on this operation too.                │
+    │       From FidoNet to Napster. From BBSing to burning.               │
+    │                                                                      │
+    │     THE OTHER CATALOG:                                               │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  Not just MP3s. Software was the real money.               │   │
+    │     │                                                            │   │
+    │     │  ┌──────────────────────────────────────────────────────┐  │   │
+    │     │  │                                                      │  │   │
+    │     │  │  PRICE LIST (circa 1999):                            │  │   │
+    │     │  │                                                      │  │   │
+    │     │  │  Windows 98 SE .............. R$ 10,00 (3 CDs)       │  │   │
+    │     │  │  Microsoft Office 2000 ...... R$ 15,00 (4 CDs)       │  │   │
+    │     │  │  Adobe Photoshop 5.5 ........ R$ 10,00 (1 CD)        │  │   │
+    │     │  │  CorelDRAW 9 ................ R$ 10,00 (2 CDs)       │  │   │
+    │     │  │  AutoCAD R14 ................ R$ 15,00 (2 CDs)       │  │   │
+    │     │  │  MP3 Collection "Top 100" ... R$  5,00 (1 CD)        │  │   │
+    │     │  │                                                      │  │   │
+    │     │  │  Microsoft was charging R$ 800+ for Office.          │  │   │
+    │     │  │  We were providing access to the masses.             │  │   │
+    │     │  │  Robin Hood with a CD burner.                        │  │   │
+    │     │  │  (That's how we justified it.)                       │  │   │
+    │     │  │                                                      │  │   │
+    │     │  └──────────────────────────────────────────────────────┘  │   │
+    │     │                                                            │   │
+    │     │  The key was the serial number list. Printed on paper.     │   │
+    │     │  Tucked inside the jewel case. Hand-written sometimes.     │   │
+    │     │  "FCKGW-RHQQ2-..." became poetry.                          │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     THE ECONOMICS:                                                   │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  CD-R (50 pack spindle) ........... R$ 50,00              │   │
+    │     │  Cost per CD ...................... R$  1,00              │   │
+    │     │  Selling price .................... R$  5,00              │   │
+    │     │  Profit per CD .................... R$  4,00              │   │
+    │     │                                                            │   │
+    │     │  6 burners × 4x speed = ~90 minutes per batch             │   │
+    │     │  6 CDs per batch × 4 batches per night = 24 CDs           │   │
+    │     │  24 CDs × R$ 4,00 = R$ 96,00 profit per night             │   │
+    │     │                                                            │   │
+    │     │  Plus electricity. Minus phone bill. Minus sleep.          │   │
+    │     │                                                            │   │
+    │     │  Metallica was not happy about this.                       │   │
+    │     │  Lars Ulrich was REALLY not happy about this.              │   │
+    │     │                                                            │   │
+    │     │  ┌──────────────────────────────────────────────┐          │   │
+    │     │  │                                              │          │   │
+    │     │  │  "I DON'T HAVE A PROBLEM WITH PEOPLE         │          │   │
+    │     │  │   DOWNLOADING OUR MUSIC FOR FREE.            │          │   │
+    │     │  │   I HAVE A PROBLEM WITH NAPSTER."            │          │   │
+    │     │  │                                              │          │   │
+    │     │  │                    -- Lars Ulrich, 2000      │          │   │
+    │     │  │                       (he had a point)       │          │   │
+    │     │  │                       (but we didn't care)   │          │   │
+    │     │  │                                              │          │   │
+    │     │  └──────────────────────────────────────────────┘          │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     THE COASTERS:                                                    │
+    │                                                                      │
+    │       Not every burn was successful. Buffer underrun was real.       │
+    │       4x burning required absolute silence. No touching the PC.      │
+    │       One failed burn = one coaster = one R$ 1,00 lost.             │
+    │                                                                      │
+    │       ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐            │
+    │       │ ░░░░░░░ │  │ ░░░░░░░ │  │ ░░░░░░░ │  │ ░░░░░░░ │            │
+    │       │ ░     ░ │  │ ░     ░ │  │ ░     ░ │  │ ░     ░ │            │
+    │       │ ░ RIP ░ │  │ ░ RIP ░ │  │ ░ RIP ░ │  │ ░ RIP ░ │            │
+    │       │ ░     ░ │  │ ░     ░ │  │ ░     ░ │  │ ░     ░ │            │
+    │       │ ░░░░░░░ │  │ ░░░░░░░ │  │ ░░░░░░░ │  │ ░░░░░░░ │            │
+    │       └─────────┘  └─────────┘  └─────────┘  └─────────┘            │
+    │         COASTER      COASTER      COASTER      COASTER              │
+    │         #1           #2           #3           #4                   │
+    │                                                                      │
+    │       We used them as actual coasters. Very eco-friendly.            │
+    │                                                                      │
+    │     THE LEGACY:                                                      │
+    │                                                                      │
+    │       From BBSes burning 1200 bps connections                        │
+    │       To burning CDs at 4x speed                                     │
+    │       To burning through 150GB of storage on Spotify                 │
+    │       The medium changed. The hustle remained.                       │
+    │                                                                      │
+    │       Also, this was technically a crime.                            │
+    │       Statute of limitations has passed.                             │
+    │       Right? RIGHT?                                                  │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
                               T H E   B O F H
                      B A S T A R D   O P E R A T O R
                            F R O M   H E L L
