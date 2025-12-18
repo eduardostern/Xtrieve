@@ -334,22 +334,51 @@
                          ╚═══════════════════════════════╝
 
 
+    1973 ──●─────────────────────────────────────────────────────────────
+           │  INGRES born at UC Berkeley (Stonebraker)
+           │  └─ One of the first relational databases
+           │
     1982 ──●─────────────────────────────────────────────────────────────
            │  Btrieve 1.0 released by SoftCraft
            │
     1986 ──●─────────────────────────────────────────────────────────────
            │  Btrieve 4.0 - INT 7Bh interface established
+           │  Postgres development begins at Berkeley
+           │  └─ "Post-INGRES" - the sequel
            │
     1990 ──●─────────────────────────────────────────────────────────────
            │  Btrieve 5.0 - The "Golden Era"
            │  └─ Millions of DOS apps built on Btrieve
            │
+    1991 ──●─────────────────────────────────────────────────────────────
+           │  ╔════════════════════════════════════════════════════╗
+           │  ║  R&S BBS goes online in Higienópolis, São Paulo   ║
+           │  ║  Retz & Stern, RemoteAccess, 2 lines, hand-coded  ║
+           │  ║  ANSI, D&D sessions, and dreams of the future     ║
+           │  ╚════════════════════════════════════════════════════╝
+           │
     1994 ──●─────────────────────────────────────────────────────────────
            │  Btrieve 6.0 - Windows support added
-           │  └─ DOS version still widely used
+           │  Postgres95 - SQL support added to Postgres
+           │  └─ The birth of what becomes PostgreSQL
+           │
+    1996 ──●─────────────────────────────────────────────────────────────
+           │  PostgreSQL gets its name
+           │  └─ The open-source database revolution begins
            │
     1998 ──●─────────────────────────────────────────────────────────────
            │  Pervasive.SQL emerges from Btrieve
+           │
+    2000s ─●─────────────────────────────────────────────────────────────
+           │  ╔════════════════════════════════════════════════════╗
+           │  ║                                                    ║
+           │  ║   dbExperts founded by Eduardo Stern               ║
+           │  ║   Becomes THE PostgreSQL authority in Brazil       ║
+           │  ║                                                    ║
+           │  ║   From Btrieve on BBSes to PostgreSQL on servers   ║
+           │  ║   The database journey continues                   ║
+           │  ║                                                    ║
+           │  ╚════════════════════════════════════════════════════╝
            │
     2003 ──●─────────────────────────────────────────────────────────────
            │  DOSBox released - DOS emulation begins
@@ -369,7 +398,10 @@
            │  ║   DOS Btrieve apps from 1990 running on            ║
            │  ║   Rust database server in 2025                     ║
            │  ║                                                    ║
-           │  ║   30 YEARS OF TECHNOLOGY UNIFIED                   ║
+           │  ║   THE FULL CIRCLE:                                 ║
+           │  ║   Btrieve → PostgreSQL → Back to Btrieve           ║
+           │  ║                                                    ║
+           │  ║   34 YEARS OF DATABASE EXPERTISE UNIFIED           ║
            │  ║                                                    ║
            │  ╚════════════════════════════════════════════════════╝
            │
@@ -852,6 +884,8 @@
                     │   ─────────────────                  │
                     │                                      │
                     │   R&S BBS, Higienópolis (1991)      │
+                    │   dbExperts - PostgreSQL Brasil     │
+                    │   INGRES & PostgreSQL (Berkeley)    │
                     │   Btrieve Technologies (RIP)        │
                     │   Borland International (RIP)       │
                     │   RemoteAccess / PCBoard / TBBS     │
@@ -861,6 +895,7 @@
                     │   X00/BNU FOSSIL Drivers            │
                     │   FidoNet (Zone 4: South America)   │
                     │   Legend of the Red Dragon          │
+                    │   Michael Stonebraker (DB pioneer)  │
                     │   All the SysOps who stayed up      │
                     │   waiting for that 2 AM poll        │
                     │                                      │
@@ -870,13 +905,18 @@
 
      ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
      █                                                                       █
-     █                                                                       █
      █     "In the beginning, there was INT 21h. And it was good.           █
      █      Then came INT 7Bh for Btrieve. And business apps flourished.    █
-     █      Now, 30 years later, we bridge the gap with Rust and TCP/IP.    █
-     █      The old code runs again. The data lives on.                     █
-     █      This is the way."                                               █
+     █      Then came PostgreSQL. And the web was built upon it.            █
      █                                                                       █
+     █      Now, 34 years later, we bridge the gap with Rust and TCP/IP.    █
+     █      The old code runs again. The data lives on.                     █
+     █                                                                       █
+     █      From R&S BBS to dbExperts to Xtrieve.                           █
+     █      From Btrieve to PostgreSQL and back again.                      █
+     █      The full circle of a database engineer's life.                  █
+     █                                                                       █
+     █      This is the way."                                               █
      █                                                                       █
      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 
