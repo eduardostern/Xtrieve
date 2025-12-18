@@ -874,7 +874,7 @@
     │     │                                                            │   │
     │     │  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  │   │
     │     │  █  T H E   H O S P I T A L   O F   H O R R O R S        █  │   │
-    │     │  █  A Large 100-Room Hospital - A Cautionary Tale        █  │   │
+    │     │  █  A 100-Room Hospital in Aracaju (with a Saint's Name) █  │   │
     │     │  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  │   │
     │     │                                                            │   │
     │     │  The hospital owner had a son. The son was "good with      │   │
