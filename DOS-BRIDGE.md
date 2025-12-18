@@ -422,9 +422,9 @@
         │                                                            │
         │   Your code STILL RUNS.                                    │
         │                                                            │
-        │                       ░░░░░░░░░░░░░░░░░░░░░░░░░              │
-        │                       ░    R E S P E C T    ░              │
-        │                       ░░░░░░░░░░░░░░░░░░░░░░░░░              │
+        │                  ░░░░░░░░░░░░░░░░░░░░░░░                   │
+        │                  ░    R E S P E C T    ░                   │
+        │                  ░░░░░░░░░░░░░░░░░░░░░░░                   │
         │                                                            │
         └────────────────────────────────────────────────────────────┘
 
@@ -445,8 +445,8 @@
     │    ┌────────────────────────────────────────────────────────────┐    │
     │    │  ░░░░░░ REALISTIC 2400 MODEM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │    │
     │    │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │    │
-    │    │  █  RD   TD   CD   OH   AA   TR   SD   HS   █   PWR    █  │    │
-    │    │  █  ●    ●    ○    ○    ○    ○    ●    ○    █          █  │    │
+    │    │  █  RD   TD   CD   OH   AA   TR   SD   HS   █   PWR    █   │    │
+    │    │  █  ●    ●    ○    ○    ○    ○    ●    ○    █          █   │    │
     │    │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │    │
     │    └────────────────────────────────────────────────────────────┘    │
     │                                                                      │
@@ -579,15 +579,15 @@
 
               ┌────────────────────────────────────────────────┐
               │                                                │
-              │         ┌──────────────────────────┐           │
-              │         │  ██████╗ ██╗██████╗  ██████╗         │
-              │         │  █╔════╝ ██║██╔══██╗██╔═══██╗        │
-              │         │  █████╗  ██║██║  ██║██║   ██║        │
-              │         │  █╔══╝   ██║██║  ██║██║   ██║        │
-              │         │  █║      ██║██████╔╝╚██████╔╝        │
-              │         │  ╚╝      ╚═╝╚═════╝  ╚═════╝         │
-              │         │      N   E   T                       │
-              │         └──────────────────────────┘           │
+              │       ┌──────────────────────────────┐         │
+              │       │  ██████╗ ██╗██████╗  ██████╗ │         │
+              │       │  █╔════╝ ██║██╔══██╗██╔═══██╗│         │
+              │       │  █████╗  ██║██║  ██║██║   ██║│         │
+              │       │  █╔══╝   ██║██║  ██║██║   ██║│         │
+              │       │  █║      ██║██████╔╝╚██████╔╝│         │
+              │       │  ╚╝      ╚═╝╚═════╝  ╚═════╝ │         │
+              │       │         N   E   T            │         │
+              │       └──────────────────────────────┘         │
               │                                                │
               │    Zone:Net/Node.Point                         │
               │    1:105/42.0                                  │
@@ -873,31 +873,34 @@
                     │   B U I L T   W I T H                │
                     │   ─────────────────                  │
                     │                                      │
-                    │   Rust ............ xtrieved        │
-                    │   Rust ............ serial-bridge   │
-                    │   Turbo C 2.0 ..... BTRSERL.EXE     │
-                    │   DOSBox-X ........ Emulation       │
-                    │   Claude Code ..... AI Pair Prog    │
-                    │   Telix 3.15 ...... Terminal        │
+                    │   Rust ............ xtrieved         │
+                    │   Rust ............ serial-bridge    │
+                    │   Turbo C 2.0 ..... BTRSERL.EXE      │
+                    │   DOSBox-X ........ Emulation        │
+                    │   Claude Code ..... AI Pair Prog     │
+                    │   Telix 3.15 ...... Terminal         │
                     │                                      │
                     │   I N S P I R E D   B Y              │
                     │   ─────────────────                  │
                     │                                      │
-                    │   R&S BBS, Higienópolis (1991)      │
-                    │   dbExperts - PostgreSQL Brasil     │
-                    │   INGRES & PostgreSQL (Berkeley)    │
-                    │   Btrieve Technologies (RIP)        │
-                    │   Borland International (RIP)       │
-                    │   RemoteAccess / PCBoard / TBBS     │
-                    │   The DOS Era (1981-1995)           │
-                    │   The Demoscene & ANSI Art Scene    │
-                    │   2400bps Modems (RIP)              │
-                    │   X00/BNU FOSSIL Drivers            │
-                    │   FidoNet (Zone 4: South America)   │
-                    │   Legend of the Red Dragon          │
-                    │   Michael Stonebraker (DB pioneer)  │
-                    │   All the SysOps who stayed up      │
-                    │   waiting for that 2 AM poll        │
+                    │   R&S BBS, Higienópolis (1991)       │
+                    │   dbExperts - PostgreSQL Brasil      │
+                    │   INGRES & PostgreSQL (Berkeley)     │
+                    │   Btrieve Technologies (RIP)         │
+                    │   Borland International (RIP)        │
+                    │   RemoteAccess / PCBoard / TBBS      │
+                    │   The DOS Era (1981-1995)            │
+                    │   The Demoscene & ANSI Art Scene     │
+                    │   2400bps Modems (RIP)               │
+                    │   X00/BNU FOSSIL Drivers             │
+                    │   FidoNet (Zone 4: South America)    │
+                    │   Legend of the Red Dragon           │
+                    │   Michael Stonebraker (DB pioneer)   │
+                    │   Hackers (1995) - Angelina Jolie    │
+                    │   BOFH - Bastard Operator From Hell  │
+                    │   RadioShack & CompuServe (RIP)      │
+                    │   All the SysOps who stayed up       │
+                    │   waiting for that 2 AM poll         │
                     │                                      │
                     ╰──────────────────────────────────────╯
 
@@ -905,18 +908,18 @@
 
      ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
      █                                                                       █
-     █     "In the beginning, there was INT 21h. And it was good.           █
-     █      Then came INT 7Bh for Btrieve. And business apps flourished.    █
-     █      Then came PostgreSQL. And the web was built upon it.            █
+     █     "In the beginning, there was INT 21h. And it was good.            █
+     █      Then came INT 7Bh for Btrieve. And business apps flourished.     █
+     █      Then came PostgreSQL. And the web was built upon it.             █
      █                                                                       █
-     █      Now, 34 years later, we bridge the gap with Rust and TCP/IP.    █
-     █      The old code runs again. The data lives on.                     █
+     █      Now, 34 years later, we bridge the gap with Rust and TCP/IP.     █
+     █      The old code runs again. The data lives on.                      █
      █                                                                       █
-     █      From R&S BBS to dbExperts to Xtrieve.                           █
-     █      From Btrieve to PostgreSQL and back again.                      █
-     █      The full circle of a database engineer's life.                  █
+     █      From R&S BBS to dbExperts to Xtrieve.                            █
+     █      From Btrieve to PostgreSQL and back again.                       █
+     █      The full circle of a database engineer's life.                   █
      █                                                                       █
-     █      This is the way."                                               █
+     █      This is the way."                                                █
      █                                                                       █
      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 
