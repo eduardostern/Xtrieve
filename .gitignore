@@ -1,8 +1,14 @@
 /target
-Cargo.lock
 *.swp
 *.swo
 *~
 .DS_Store
-*.dat
-/data/
+
+# Ignore data files at root (use data/fixtures/ for test data)
+/*.dat
+/*.DAT
+
+# Ignore runtime data but keep fixtures
+/data/*.dat
+/data/*.DAT
+!/data/fixtures/

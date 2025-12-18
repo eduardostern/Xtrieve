@@ -82,8 +82,8 @@ impl IndexNode {
     /// Header size for Btrieve 5.1 index nodes
     pub const HEADER_SIZE: usize = 16;
 
-    /// Entry size in Btrieve 5.1 index pages (16 bytes per entry)
-    pub const ENTRY_SIZE: usize = 16;
+    /// Entry size in Btrieve 5.1 index pages (12 bytes per entry)
+    pub const ENTRY_SIZE: usize = 12;
 
     /// Parse an index node from page data (Btrieve 5.1 format)
     pub fn from_bytes(
@@ -115,7 +115,8 @@ impl IndexNode {
         let key_length = key_spec.length as usize;
         let mut leaf_entries = Vec::with_capacity(entry_count as usize);
 
-        // Parse Btrieve 5.1 index entries (16 bytes each, starting at offset 16)
+        // Parse Btrieve 5.1 index entries (12 bytes each, starting at offset 16)
+        // Entry format: key(4) + offset_high(2) + offset_low(2) + dup_ptr(4) = 12 bytes
         for i in 0..entry_count as usize {
             let entry_offset = Self::HEADER_SIZE + (i * Self::ENTRY_SIZE);
             if entry_offset + Self::ENTRY_SIZE > data.len() {
@@ -126,18 +127,24 @@ impl IndexNode {
             let key_end = entry_offset + key_length.min(4);
             let key = data[entry_offset..key_end].to_vec();
 
-            // Extract record offset (at entry_offset + 6, 2 bytes)
-            // This is the absolute file offset to the record data
-            let record_offset = u16::from_le_bytes([
+            // Extract record file offset (4 bytes total):
+            // - bytes 4-5: high word of offset
+            // - bytes 6-7: low word of offset
+            // Full offset = (high << 16) | low
+            let offset_high = u16::from_le_bytes([
+                data[entry_offset + 4],
+                data[entry_offset + 5],
+            ]) as u32;
+            let offset_low = u16::from_le_bytes([
                 data[entry_offset + 6],
                 data[entry_offset + 7],
             ]) as u32;
+            let file_offset = (offset_high << 16) | offset_low;
 
-            // Convert file offset to page/slot address
-            // For now, store the raw file offset in the record address
+            // Store file offset in RecordAddress.page, with slot=0 to indicate file offset mode
             let record_address = RecordAddress {
-                page: 0, // We'll use file_offset instead
-                slot: record_offset as u16,
+                page: file_offset,
+                slot: 0,
             };
 
             leaf_entries.push(LeafEntry {
@@ -389,7 +396,7 @@ impl IndexNode {
         data[8..12].copy_from_slice(&prev.to_le_bytes());
         data[12..16].copy_from_slice(&next.to_le_bytes());
 
-        // Entries
+        // Entries (12 bytes each)
         let mut offset = Self::HEADER_SIZE;
 
         for entry in &self.leaf_entries {
@@ -398,19 +405,18 @@ impl IndexNode {
             data[offset..offset + key_len].copy_from_slice(&entry.key[..key_len]);
             offset += 4;
 
-            // Padding
-            data[offset..offset + 2].copy_from_slice(&[0, 0]);
+            // File offset stored in RecordAddress.page (4 bytes as high:2 + low:2)
+            let file_offset = entry.record_address.page;
+            let offset_high = ((file_offset >> 16) & 0xFFFF) as u16;
+            let offset_low = (file_offset & 0xFFFF) as u16;
+
+            data[offset..offset + 2].copy_from_slice(&offset_high.to_le_bytes());
             offset += 2;
 
-            // Record offset (2 bytes)
-            data[offset..offset + 2].copy_from_slice(&entry.record_address.slot.to_le_bytes());
+            data[offset..offset + 2].copy_from_slice(&offset_low.to_le_bytes());
             offset += 2;
 
-            // More padding/duplicate pointer
-            data[offset..offset + 4].copy_from_slice(&[0, 0, 0, 0]);
-            offset += 4;
-
-            // Link pointer
+            // Duplicate/link pointer (4 bytes)
             data[offset..offset + 4].copy_from_slice(&[0xFF, 0xFF, 0xFF, 0xFF]);
             offset += 4;
         }
@@ -524,6 +530,7 @@ mod tests {
     #[test]
     fn test_parse_btrieve51_index() {
         // Simulate a Btrieve 5.1 index page with 2 entries
+        // Entry format: key(4) + offset_high(2) + offset_low(2) + dup_ptr(4) = 12 bytes
         let mut data = vec![0u8; 1024];
 
         // Header
@@ -531,20 +538,25 @@ mod tests {
         data[8..12].copy_from_slice(&0xFFFFFFFFu32.to_le_bytes()); // prev = none
         data[12..16].copy_from_slice(&0xFFFFFFFFu32.to_le_bytes()); // next = none
 
-        // Entry 1: key=100, offset=0x0806
-        data[16..20].copy_from_slice(&100u32.to_le_bytes());
-        data[22..24].copy_from_slice(&0x0806u16.to_le_bytes());
+        // Entry 1 at offset 16: key=100, offset=0x00000806 (high=0, low=0x0806)
+        data[16..20].copy_from_slice(&100u32.to_le_bytes()); // key
+        data[20..22].copy_from_slice(&0u16.to_le_bytes());   // offset high
+        data[22..24].copy_from_slice(&0x0806u16.to_le_bytes()); // offset low
+        data[24..28].copy_from_slice(&0xFFFFFFFFu32.to_le_bytes()); // dup ptr
 
-        // Entry 2: key=200, offset=0x084E
-        data[32..36].copy_from_slice(&200u32.to_le_bytes());
-        data[38..40].copy_from_slice(&0x084Eu16.to_le_bytes());
+        // Entry 2 at offset 28: key=200, offset=0x0001084E (high=1, low=0x084E)
+        data[28..32].copy_from_slice(&200u32.to_le_bytes()); // key
+        data[32..34].copy_from_slice(&1u16.to_le_bytes());   // offset high (tests large offset)
+        data[34..36].copy_from_slice(&0x084Eu16.to_le_bytes()); // offset low
+        data[36..40].copy_from_slice(&0xFFFFFFFFu32.to_le_bytes()); // dup ptr
 
         let key_spec = test_key_spec();
         let node = IndexNode::from_bytes(1, &data, key_spec).unwrap();
 
         assert_eq!(node.entry_count, 2);
         assert_eq!(node.leaf_entries.len(), 2);
-        assert_eq!(node.leaf_entries[0].record_address.slot, 0x0806);
-        assert_eq!(node.leaf_entries[1].record_address.slot, 0x084E);
+        // File offset stored in RecordAddress.page
+        assert_eq!(node.leaf_entries[0].record_address.page, 0x0806);
+        assert_eq!(node.leaf_entries[1].record_address.page, 0x0001084E); // (1 << 16) | 0x084E
     }
 }

@@ -105,7 +105,20 @@ impl FileControlRecord {
         let record_length = u16::from_le_bytes([data[0x16], data[0x17]]);
         let num_records = u32::from_le_bytes([data[0x1C], data[0x1D], data[0x1E], data[0x1F]]);
         let num_pages = u32::from_le_bytes([data[0x20], data[0x21], data[0x22], data[0x23]]);
-        let first_data_page = u32::from_le_bytes([data[0x24], data[0x25], data[0x26], data[0x27]]);
+
+        // In Btrieve 5.1, offset 0x24 contains the index root page, not first_data_page.
+        // For real Btrieve 5.1 files: page 0 = FCR, page 1 = index root, page 2+ = data
+        // For Xtrieve-created files, we store first_data_page at 0x24
+        let index_root_page = u32::from_le_bytes([data[0x24], data[0x25], data[0x26], data[0x27]]);
+
+        // Detect real Btrieve 5.1 files: if index_root is 1 and num_keys > 0, data starts at page 2
+        let first_data_page = if index_root_page == 1 && num_keys > 0 {
+            2 // Real Btrieve 5.1 file: data pages start after index
+        } else if index_root_page == 0 {
+            2 // No index, data starts at page 2
+        } else {
+            index_root_page // Xtrieve format or other
+        };
 
         // Parse key specifications (start at offset 0x110 in Btrieve 5.1)
         let mut keys = Vec::with_capacity(num_keys as usize);

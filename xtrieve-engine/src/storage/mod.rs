@@ -19,5 +19,5 @@ pub use page::{Page, PageType, PAGE_SIZES};
 pub use fcr::FileControlRecord;
 pub use key::{KeySpec, KeyType, KeyFlags};
 pub use record::Record;
-pub use btree::BTree;
+pub use btree::{BTree, LeafEntry};
 pub use files::{BtrieveFileSet, IndexFileHeader, PreImageRecord, PreImageHeader};

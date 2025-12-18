@@ -13,6 +13,30 @@ Xtrieve implements the binary file format and operation codes of Novell/Pervasiv
 - **Record Locking** - Single record and multi-record locks
 - **Lightweight Binary Protocol** - Sub-megabyte server binary (656 KB)
 - **Sync & Async Clients** - Both blocking and tokio-based async clients
+- **DOS Bridge** - Run original DOS Btrieve apps via serial-to-TCP bridge
+
+## DOS Bridge
+
+Run **original, unmodified DOS applications** from the 1990s against Xtrieve. No recompilation required.
+
+```
+DOS Application (Turbo Pascal, Clipper, C...)
+         │
+         │ INT 7Bh
+         ▼
+    BTRSERL.EXE (TSR) ──── COM1 @ 115200 ────┐
+                                              │
+                   ┌──────────────────────────┘
+                   ▼
+            serial-bridge (Rust) ──── TCP:7419 ──── xtrieved
+```
+
+The bridge consists of:
+- **BTRSERL.EXE** - DOS TSR (~7KB) that hooks INT 7Bh and redirects to serial
+- **serial-bridge** - Rust program that translates serial to TCP protocol
+- **xtrieved** - The Xtrieve server
+
+See [docs/bridge/](docs/bridge/) for complete documentation.
 
 ## Architecture
 
@@ -167,6 +191,7 @@ Btrieve 5.1 files use:
 - **xtrieve-engine** - Core storage engine (no I/O dependencies)
 - **xtrieved** - Server daemon with TCP listener
 - **xtrieve-client** - Client library (sync + async)
+- **serial-bridge** - DOS serial-to-TCP bridge
 
 ## Building for Size
 
@@ -182,6 +207,46 @@ panic = "abort"
 ```
 
 Result: 656 KB (down from 3.6 MB with gRPC)
+
+## Documentation
+
+- [DOS Bridge Guide](docs/bridge/) - Run legacy DOS apps with Xtrieve
+- [Protocol Specification](docs/bridge/PROTOCOL.md) - Wire protocol details
+- [Technical Reference](docs/bridge/TECHNICAL.md) - TSR internals
+
+## The Story
+
+This project bridges 30+ years of database history - from BBS systems running Btrieve in 1991 to modern Rust servers in 2025. For the full story, see [docs/STORY.md](docs/STORY.md).
+
+---
+
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                        X T R I E V E   v 0 . 1 . 0                        ║
+║                                                                            ║
+║                   ░▒▓█ S H A R E W A R E   E D I T I O N █▓▒░              ║
+║                                                                            ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║                                                                            ║
+║   This software is distributed under the MIT License.                      ║
+║   It is FREE for personal and commercial use.                              ║
+║                                                                            ║
+║   If you find this software useful, please consider:                       ║
+║                                                                            ║
+║     ★  Starring the repository on GitHub                                   ║
+║     ★  Contributing code, documentation, or bug reports                    ║
+║     ★  Telling others about this project                                   ║
+║     ★  Sponsoring the development                                          ║
+║                                                                            ║
+║   Registration is not required, but your support is appreciated!           ║
+║                                                                            ║
+║   "If you like it, share it. If you love it, contribute."                  ║
+║                                                                            ║
+║                                             - The spirit of Shareware      ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
 ## License
 
