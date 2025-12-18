@@ -110,25 +110,58 @@ Your 1990s Btrieve application now uses Xtrieve!
 
 ## Supported Operations
 
+The bridge is transparent - it forwards ALL operation codes to xtrieved. The following operations are fully implemented:
+
+### File Operations
 | Code | Operation | Description |
 |------|-----------|-------------|
 | 0 | OPEN | Open an existing file |
 | 1 | CLOSE | Close an open file |
+| 14 | CREATE | Create a new Btrieve file |
+| 15 | STAT | Get file statistics |
+
+### Record Operations
+| Code | Operation | Description |
+|------|-----------|-------------|
 | 2 | INSERT | Insert a new record |
 | 3 | UPDATE | Update the current record |
 | 4 | DELETE | Delete the current record |
-| 5 | GET_EQUAL | Find record by key value |
+
+### Key Navigation
+| Code | Operation | Description |
+|------|-----------|-------------|
+| 5 | GET_EQUAL | Find record by exact key match |
 | 6 | GET_NEXT | Get next record in key order |
-| 7 | GET_PREVIOUS | Get previous record |
+| 7 | GET_PREVIOUS | Get previous record in key order |
 | 8 | GET_GREATER | Get first record > key |
 | 9 | GET_GT_OR_EQ | Get first record >= key |
 | 10 | GET_LESS | Get first record < key |
 | 11 | GET_LT_OR_EQ | Get first record <= key |
-| 12 | GET_FIRST | Get first record in file |
-| 13 | GET_LAST | Get last record in file |
-| 14 | CREATE | Create a new Btrieve file |
-| 15 | STAT | Get file statistics |
+| 12 | GET_FIRST | Get first record in key order |
+| 13 | GET_LAST | Get last record in key order |
+
+### Physical Navigation
+| Code | Operation | Description |
+|------|-----------|-------------|
+| 22 | GET_POSITION | Get current physical position |
+| 23 | GET_DIRECT | Get record by physical position |
+| 24 | STEP_NEXT | Step to next physical record |
+| 33 | STEP_FIRST | Step to first physical record |
+| 34 | STEP_LAST | Step to last physical record |
+| 35 | STEP_PREVIOUS | Step to previous physical record |
+
+### Transactions
+| Code | Operation | Description |
+|------|-----------|-------------|
+| 19 | BEGIN_TRANS | Begin transaction (ACID isolation) |
+| 20 | END_TRANS | Commit transaction |
+| 21 | ABORT_TRANS | Rollback transaction |
+
+### Utility
+| Code | Operation | Description |
+|------|-----------|-------------|
 | 26 | VERSION | Get Btrieve version info |
+| 28 | RESET | Reset session state |
 
 ## Documentation
 
@@ -137,4 +170,4 @@ Your 1990s Btrieve application now uses Xtrieve!
 
 ## The Story
 
-This bridge represents 30+ years of database evolution - from BBS systems running Btrieve in 1991 to modern Rust servers in 2025. For the full story behind this project, see [MEMORIES.md](../../MEMORIES.md).
+This bridge represents 30+ years of database evolution - from BBS systems running Btrieve in 1991 to modern Rust servers in 2025. For the full story behind this project, see [The Story](../STORY.md).
