@@ -1137,6 +1137,10 @@
     │     │  1986: Scotty speaks "Hello, Computer" into mouse          │   │
     │     │  2025: Both would actually work now.                       │   │
     │     │                                                            │   │
+    │     │  ♪♪ Scotty doesn't know... Scotty doesn't know... ♪♪       │   │
+    │     │     (that the computer would eventually respond)           │   │
+    │     │                    -- Not Matt Damon, Eurotrip (2004)      │   │
+    │     │                                                            │   │
     │     │  Plot twist: Sometimes the AI IS the disaster.             │   │
     │     │                                                            │   │
     │     │    ┌──────────────────────────────────────────────────┐    │   │
