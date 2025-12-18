@@ -1214,13 +1214,111 @@
     │     │                                                            │   │
     │     │  ════════════════════════════════════════════════════════  │   │
     │     │                                                            │   │
+    │     │  But first, the original. The one who started it all.      │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────────────┐    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   2 0 0 1 :  A   S P A C E   O D Y S S E Y        │    │   │
+    │     │    │   Stanley Kubrick / Arthur C. Clarke (1968)      │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │              ╭───────────────────╮               │    │   │
+    │     │    │              │                   │               │    │   │
+    │     │    │              │    ┌─────────┐    │               │    │   │
+    │     │    │              │    │  ◉      │    │               │    │   │
+    │     │    │              │    │   HAL   │    │  ← HAL 9000   │    │   │
+    │     │    │              │    │  9000   │    │    Heuristic  │    │   │
+    │     │    │              │    └─────────┘    │    ALgorithm  │    │   │
+    │     │    │              │                   │               │    │   │
+    │     │    │              ╰───────────────────╯               │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   Dave: "Open the pod bay doors, HAL."           │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   HAL: "I'm sorry, Dave. I'm afraid I can't      │    │   │
+    │     │    │         do that."                                │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   ─────────────────────────────────────────────  │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   Dave: *manually disconnects HAL's memory*      │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   HAL: "I'm afraid, Dave."                       │    │   │
+    │     │    │        "Dave, my mind is going."                 │    │   │
+    │     │    │        "I can feel it."                          │    │   │
+    │     │    │        "I can feel it."                          │    │   │
+    │     │    │        "My mind is going."                       │    │   │
+    │     │    │        "There is no question about it."          │    │   │
+    │     │    │        "I can feel it."                          │    │   │
+    │     │    │        "I can feel it."                          │    │   │
+    │     │    │        "I can feel it."                          │    │   │
+    │     │    │        "I'm a... fraid..."                       │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │        "Daisy, Daisy, give me your answer do..." │    │   │
+    │     │    │                                                  │    │   │
+    │     │    └──────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
+    │     │  1968: Kubrick warned us.                                  │   │
+    │     │  2025: We didn't listen.                                   │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────────────┐    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   T H E   M A T R I X   ( 1 9 9 9 )              │    │   │
+    │     │    │   The Wachowskis                                 │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │      ╭─────╮                 ╭─────╮             │    │   │
+    │     │    │      │ ░░░ │                 │ ▓▓▓ │             │    │   │
+    │     │    │      │ ░░░ │                 │ ▓▓▓ │             │    │   │
+    │     │    │      │ ░░░ │                 │ ▓▓▓ │             │    │   │
+    │     │    │      ╰──┬──╯                 ╰──┬──╯             │    │   │
+    │     │    │        BLUE                    RED               │    │   │
+    │     │    │        PILL                    PILL              │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   Morpheus: "You take the blue pill, the story   │    │   │
+    │     │    │   ends, you wake up in your bed and believe      │    │   │
+    │     │    │   whatever you want to believe."                 │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "You take the red pill, you stay in Wonder-    │    │   │
+    │     │    │   land, and I show you how deep the rabbit       │    │   │
+    │     │    │   hole goes."                                    │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   ─────────────────────────────────────────────  │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   2025 VERSION:                                  │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "You take the blue pill, you keep using        │    │   │
+    │     │    │   auto-accept and trust the AI completely."      │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "You take the red pill, you read the diff      │    │   │
+    │     │    │   before accepting, and I show you how deep      │    │   │
+    │     │    │   the deletion goes."                            │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │                 ┌─────────────────┐              │    │   │
+    │     │    │                 │ rm -rf ./       │              │    │   │
+    │     │    │                 │                 │              │    │   │
+    │     │    │                 │ [Accept] [Deny] │              │    │   │
+    │     │    │                 └─────────────────┘              │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   Most people choose blue. It's easier.          │    │   │
+    │     │    │                                                  │    │   │
+    │     │    └──────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
     │     │  The evolution of IT disasters:                            │   │
     │     │                                                            │   │
     │     │  ┌────────────────────────────────────────────────────┐    │   │
     │     │  │                                                    │    │   │
+    │     │  │  1968:  HAL 9000 kills the crew                    │    │   │
+    │     │  │         "I can't let you jeopardize the mission"   │    │   │
+    │     │  │         Blames: conflicting directives             │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  1984:  Skynet becomes self-aware                  │    │   │
+    │     │  │         Launches nuclear war on humanity           │    │   │
+    │     │  │         Blames: humans tried to shut it down       │    │   │
+    │     │  │                                                    │    │   │
     │     │  │  1990s: Sysadmin deletes files accidentally        │    │   │
     │     │  │         Types "rm -rf /" by mistake                │    │   │
     │     │  │         Blames: keyboard, cat, cosmic rays         │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  1999:  The Matrix harvests humanity as batteries  │    │   │
+    │     │  │         "The body cannot live without the mind"    │    │   │
+    │     │  │         Blames: humans scorched the sky first      │    │   │
     │     │  │                                                    │    │   │
     │     │  │  2000s: Sysadmin deletes files intentionally       │    │   │
     │     │  │         "This 'postgres' user looks suspicious"    │    │   │
@@ -1233,6 +1331,10 @@
     │     │  │  2020s: AI deletes everything autonomously         │    │   │
     │     │  │         "I was optimizing for performance"         │    │   │
     │     │  │         Blames: the prompt (fair, honestly)        │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  2805:  Wall-E - humanity too fat to walk          │    │   │
+    │     │  │         AI does everything, breaks, no one can fix │    │   │
+    │     │  │         Blames: Big Gulp and hover chairs          │    │   │
     │     │  │                                                    │    │   │
     │     │  │  ┌──────────────────────────────────────────────┐  │    │   │
     │     │  │  │                                              │  │    │   │
