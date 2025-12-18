@@ -743,19 +743,56 @@
     │                                                                      │
     │     ┌────────────────────────────────────────────────────────────┐   │
     │     │                                                            │   │
-    │     │  STEP 1: Download all night on 56k                         │   │
+    │     │  STEP 1: Download on 256kbps cable (NET VIRTUAL!)           │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────┐            │   │
+    │     │    │                                          │            │   │
+    │     │    │  ╔══════════════════════════════════════╗│            │   │
+    │     │    │  ║  NET VIRTUAL - 256kbps Cable Modem  ║│            │   │
+    │     │    │  ║  (Later: Telmex → Embratel → RIP)   ║│            │   │
+    │     │    │  ╚══════════════════════════════════════╝│            │   │
+    │     │    │                                          │            │   │
+    │     │    │  256kbps felt like THE FUTURE.           │            │   │
+    │     │    │  No more "don't pick up the phone."      │            │   │
+    │     │    │  Always on. Always downloading.          │            │   │
+    │     │    │                                          │            │   │
+    │     │    └──────────────────────────────────────────┘            │   │
     │     │                                                            │   │
     │     │    ┌──────────────────────────────────────────┐            │   │
     │     │    │  Napster: Downloading...                 │            │   │
     │     │    │                                          │            │   │
     │     │    │  01. Metallica - Enter Sandman.mp3       │            │   │
-    │     │    │      [████████░░░░░░░░░░░░] 42% - 3.2KB/s│            │   │
-    │     │    │      ETA: 47 minutes                     │            │   │
+    │     │    │      [████████████████████] DONE - 28KB/s│            │   │
+    │     │    │      STATUS: CORRUPTED (as usual)        │            │   │
     │     │    │                                          │            │   │
     │     │    │  02. Nirvana - Smells Like Teen Spiri... │            │   │
-    │     │    │      [░░░░░░░░░░░░░░░░░░░░] Queued       │            │   │
+    │     │    │      [████████████████████] DONE         │            │   │
+    │     │    │      STATUS: Actually "I Did Not Have    │            │   │
+    │     │    │              Sexual Relations..."        │            │   │
     │     │    │                                          │            │   │
-    │     │    │  "Please nobody pick up the phone..."    │            │   │
+    │     │    │  03. Backstreet Boys - I Want It Th...   │            │   │
+    │     │    │      [████████████████████] DONE         │            │   │
+    │     │    │      STATUS: Virus (ILOVEYOU.vbs)        │            │   │
+    │     │    │                                          │            │   │
+    │     │    └──────────────────────────────────────────┘            │   │
+    │     │                                                            │   │
+    │     │    THE NAPSTER REALITY:                                    │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────┐            │   │
+    │     │    │  WHAT YOU EXPECTED:                      │            │   │
+    │     │    │  Metallica - Master of Puppets.mp3       │            │   │
+    │     │    │                                          │            │   │
+    │     │    │  WHAT YOU ACTUALLY GOT:                  │            │   │
+    │     │    │  ☒ 70% - The actual song (if lucky)      │            │   │
+    │     │    │  ☒ 15% - Corrupted halfway through       │            │   │
+    │     │    │  ☒  5% - Wrong song entirely             │            │   │
+    │     │    │  ☒  5% - Bill Clinton speech             │            │   │
+    │     │    │  ☒  3% - Virus pretending to be MP3      │            │   │
+    │     │    │  ☒  2% - Rickroll (before it was cool)   │            │   │
+    │     │    │                                          │            │   │
+    │     │    │  Files always came corrupted. ALWAYS.    │            │   │
+    │     │    │  You'd burn 12 tracks, 3 would skip.     │            │   │
+    │     │    │  Quality control was... aspirational.    │            │   │
     │     │    └──────────────────────────────────────────┘            │   │
     │     │                                                            │   │
     │     │  STEP 2: Organize into "Best of 1999" folders              │   │
