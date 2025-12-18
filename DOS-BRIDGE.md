@@ -799,16 +799,23 @@
     │     │         *home directory was PostgreSQL data dir*           │   │
     │     │         *entire court database gone*                       │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #2: "RECOVER MY FILES"                           │   │
+    │     │  SYSADMIN #2: $ recover my files                           │   │
+    │     │               bash: recover: command not found             │   │
+    │     │                                                            │   │
+    │     │  (He literally typed it on the command line.               │   │
+    │     │   As if Linux understood natural language.                 │   │
+    │     │   As if ChatGPT existed in 2008.                           │   │
+    │     │   A man ahead of his time. Or just desperate.)             │   │
     │     │                                                            │   │
     │     │  ─────────────────────────────────────────────────────     │   │
     │     │                                                            │   │
     │     │  dbExperts was called for post-mortem forensic recovery.   │   │
     │     │  Eduardo Stern had to piece together a court database      │   │
-    │     │  from disk fragments.                                      │   │
+    │     │  from raw disk blocks.                                     │   │
     │     │                                                            │   │
     │     │  Lesson: NEVER share UIDs. NEVER delete users in panic.    │   │
     │     │          ALWAYS have backups. (Not to /dev/null.)          │   │
+    │     │          And no, Linux does not speak English. Yet.        │   │
     │     │                                                            │   │
     │     └────────────────────────────────────────────────────────────┘   │
     │                                                                      │
