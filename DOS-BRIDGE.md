@@ -763,6 +763,62 @@
     │                                                                      │
     │     To Renato, wherever you are.                                     │
     │     We're still hooking interrupts.                                  │
+    │     And rolling d20s in our hearts.                                  │
+    │                                                                      │
+    │                                                                      │
+    │              T H E   D U N G E O N   M A S T E R                     │
+    │              ───────────────────────────────────                     │
+    │                                                                      │
+    │         Renato played D&D. The original nerd credential.             │
+    │         Before it was cool. Before Stranger Things.                  │
+    │         When being a geek meant something.                           │
+    │                                                                      │
+    │                                                                      │
+    │                        .     .                                       │
+    │                       /(     )\                                      │
+    │                      (  \   /  )                                     │
+    │                       \  \ /  /                                      │
+    │                    ____\     /____                                   │
+    │                   /    .\   /.    \                                  │
+    │                  /   .` |   | `.   \                                 │
+    │                 /   /   |   |   \   \                                │
+    │                 |  |  __|   |__  |  |                                │
+    │                 |  | /  \   /  \ |  |                                │
+    │                 |  |/    \_/    \|  |                                │
+    │                  \  \     ^     /  /                                 │
+    │                   \  \   /|\   /  /                                  │
+    │                    \  \_/ | \_/  /                                   │
+    │                     \____/|\____/                                    │
+    │                          |||                                         │
+    │                          |||                                         │
+    │                         /|||\                                        │
+    │                        / ||| \                                       │
+    │                       /  |||  \                                      │
+    │                      /___|_|___\                                     │
+    │                                                                      │
+    │                    D E M O G O R G O N                               │
+    │             Prince of Demons, CR 26, TPK Guaranteed                  │
+    │                                                                      │
+    │                                                                      │
+    │    ┌────────────────────────────────────────────────────────────┐    │
+    │    │                                                            │    │
+    │    │      ╔══════════════════════════════════════════════╗      │    │
+    │    │      ║                                              ║      │    │
+    │    │      ║    "You enter the dungeon. Roll initiative." ║      │    │
+    │    │      ║                                              ║      │    │
+    │    │      ║    [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]   ║      │    │
+    │    │      ║     d4  d6  d8 d10 d12 d20 d20 d20 d20 d%    ║      │    │
+    │    │      ║                                              ║      │    │
+    │    │      ║    THAC0: 12    AC: -8    HP: ███████░░░     ║      │    │
+    │    │      ║                                              ║      │    │
+    │    │      ╚══════════════════════════════════════════════╝      │    │
+    │    │                                                            │    │
+    │    │    From rolling dice in Higienópolis basements             │    │
+    │    │    to rolling commits on GitHub.                           │    │
+    │    │                                                            │    │
+    │    │    The adventure continues.                                │    │
+    │    │                                                            │    │
+    │    └────────────────────────────────────────────────────────────┘    │
     │                                                                      │
     │                                                                      │
     └──────────────────────────────────────────────────────────────────────┘
