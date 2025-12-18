@@ -42,9 +42,9 @@
 
 
 
-                         ╔═══════════════════════════════╗
-                         ║   T H E   A R C H I T E C T U R E   ║
-                         ╚═══════════════════════════════╝
+                     ╔═══════════════════════════════════════╗
+                     ║     T H E   A R C H I T E C T U R E   ║
+                     ╚═══════════════════════════════════════╝
 
 
                             ┌─────────────────────────────┐
@@ -137,11 +137,11 @@
 
       ┌──────────────────────────────────────────────────────────────────┐
       │                    RESPONSE  (XTRIEVE → DOS)                     │
-      ├────────┬────────────┬──────────┬──────────────────────────────────┤
-      │ STATUS │  POS_BLK   │   DATA   │         KEY                     │
-      │   2    │    128     │   4+N    │         2+N                     │
-      │ bytes  │   bytes    │  bytes   │        bytes                    │
-      └────────┴────────────┴──────────┴──────────────────────────────────┘
+      ├──────────┬──────────────┬────────────┬──────────────────────────┤
+      │  STATUS  │   POS_BLK    │    DATA    │           KEY            │
+      │    2     │     128      │    4+N     │           2+N            │
+      │  bytes   │    bytes     │   bytes    │          bytes           │
+      └──────────┴──────────────┴────────────┴──────────────────────────┘
 
 
             ┌─────────────────────────────────────────────────────┐
@@ -386,13 +386,53 @@
         │   To all the DOS programmers who came before...            │
         │   To the Turbo C hackers and Clipper developers...         │
         │   To everyone who wrote "Press any key to continue"...     │
-        │   To the BBS sysops and the demoscene coders...           │
+        │   To the BBS sysops and the demoscene coders...            │
         │                                                            │
         │   Your code STILL RUNS.                                    │
         │                                                            │
-        │                              ░░░░░░░░░░░░░░░░░░░░░         │
-        │                              ░  R E S P E C T  ░░         │
-        │                              ░░░░░░░░░░░░░░░░░░░░░         │
+        │                         ░░░░░░░░░░░░░░░░░░░░░░             │
+        │                         ░   R E S P E C T   ░             │
+        │                         ░░░░░░░░░░░░░░░░░░░░░░             │
+        │                                                            │
+        └────────────────────────────────────────────────────────────┘
+
+
+
+                     ╔═══════════════════════════════════════╗
+                     ║   B A C K   I N   T H E   D A Y . . . ║
+                     ╚═══════════════════════════════════════╝
+
+
+        ┌────────────────────────────────────────────────────────────┐
+        │                                                            │
+        │      ┌──────────────────────────────────────────────┐      │
+        │      │  ░░░ REALISTIC 2400 MODEM ░░░░░░░░░░░░░░░░░  │      │
+        │      │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │      │
+        │      │  █ RD  TD  CD  OH  AA  TR  SD  HS  █  PWR █  │      │
+        │      │  █ ●   ●   ○   ○   ○   ○   ●   ○   █      █  │      │
+        │      │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │      │
+        │      └──────────────────────────────────────────────┘      │
+        │                                                            │
+        │      2400 bps. No MNP5. No error correction.               │
+        │      Analog phone line. Pulse dial. Click-click-click.     │
+        │                                                            │
+        │      TELIX loaded. ANSI.SYS loaded. AT&F. ATZ. ATDT.       │
+        │                                                            │
+        │      Connecting to BBSes at 300 characters per second.     │
+        │      Watching ASCII art scroll down line by line.          │
+        │      Downloading a 50KB file took 3 minutes.               │
+        │      And we were GRATEFUL.                                 │
+        │                                                            │
+        │      Now DOSBox-X nullmodem gives us 115200 baud virtual   │
+        │      serial over TCP/IP. But the spirit is the same:       │
+        │                                                            │
+        │           ╔══════════════════════════════════════╗         │
+        │           ║  SERIAL IS SERIAL IS SERIAL IS LIFE  ║         │
+        │           ╚══════════════════════════════════════╝         │
+        │                                                            │
+        │      From Realistic Walkie-Talkies to DOSBox-X nullmodem.  │
+        │      The bits still flow. The protocol still works.        │
+        │      Some things never change.                             │
         │                                                            │
         └────────────────────────────────────────────────────────────┘
 
@@ -406,27 +446,29 @@
                     ╭──────────────────────────────────────╮
                     │                                      │
                     │   C O D E   &   D E S I G N          │
-                    │   ─────────────────────────          │
+                    │   ───────────────────────            │
                     │                                      │
                     │   Claude (Anthropic)                 │
                     │   Eduardo                            │
                     │                                      │
                     │   B U I L T   W I T H                │
-                    │   ─────────────────────              │
+                    │   ─────────────────                  │
                     │                                      │
-                    │   Rust ............... xtrieved     │
-                    │   Rust ............... serial-bridge│
-                    │   Turbo C 2.0 ........ BTRSERL.EXE  │
-                    │   DOSBox-X ........... Emulation    │
-                    │   Claude Code ........ AI Pair Prog │
+                    │   Rust ............ xtrieved        │
+                    │   Rust ............ serial-bridge   │
+                    │   Turbo C 2.0 ..... BTRSERL.EXE     │
+                    │   DOSBox-X ........ Emulation       │
+                    │   Claude Code ..... AI Pair Prog    │
+                    │   Telix 3.15 ...... Terminal        │
                     │                                      │
                     │   I N S P I R E D   B Y              │
-                    │   ─────────────────────              │
+                    │   ─────────────────                  │
                     │                                      │
-                    │   Btrieve Technologies (RIP)         │
-                    │   Borland International (RIP)        │
+                    │   Btrieve Technologies (RIP)        │
+                    │   Borland International (RIP)       │
                     │   The DOS Era (1981-1995)           │
-                    │   The Demoscene                      │
+                    │   The Demoscene                     │
+                    │   2400bps Modems (RIP)              │
                     │                                      │
                     ╰──────────────────────────────────────╯
 
