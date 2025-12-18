@@ -870,6 +870,223 @@
     │     └────────────────────────────────────────────────────────────┘   │
     │                                                                      │
     │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  │   │
+    │     │  █  T H E   H O S P I T A L   O F   H O R R O R S        █  │   │
+    │     │  █  São Lucas Hospital, Aracaju - A Cautionary Tale      █  │   │
+    │     │  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  │   │
+    │     │                                                            │   │
+    │     │  The hospital owner had a son. The son was "good with      │   │
+    │     │  computers." Those four words have caused more damage to   │   │
+    │     │  IT infrastructure than any virus ever written.            │   │
+    │     │                                                            │   │
+    │     │  The son had an idea. A brilliant idea, he thought.        │   │
+    │     │                                                            │   │
+    │     │  "Why pay for offsite backup when we can just..."          │   │
+    │     │                                                            │   │
+    │     │    ┌─────────────────────────────────────────────────┐     │   │
+    │     │    │  ┌─────────┐         ┌─────────┐                │     │   │
+    │     │    │  │ HDD #1  │────────▶│ HDD #2  │                │     │   │
+    │     │    │  │ PRIMARY │ rsync   │ BACKUP  │                │     │   │
+    │     │    │  └────┬────┘         └────┬────┘                │     │   │
+    │     │    │       │                   │                     │     │   │
+    │     │    │       └─────────┬─────────┘                     │     │   │
+    │     │    │                 │                               │     │   │
+    │     │    │          ┌─────┴─────┐                          │     │   │
+    │     │    │          │  SAME PSU │ ← Chinese knockoff       │     │   │
+    │     │    │          │  (火灾)   │   $12 on AliExpress      │     │   │
+    │     │    │          └───────────┘                          │     │   │
+    │     │    │                                                 │     │   │
+    │     │    │          S A M E   M A C H I N E                │     │   │
+    │     │    └─────────────────────────────────────────────────┘     │   │
+    │     │                                                            │   │
+    │     │  ...backup to another hard drive on the SAME machine."     │   │
+    │     │                                                            │   │
+    │     │  What could go wrong?                                      │   │
+    │     │                                                            │   │
+    │     │  ════════════════════════════════════════════════════════  │   │
+    │     │                                                            │   │
+    │     │  The Chinese knockoff power supply had other plans.        │   │
+    │     │  It had lived a good life. Three months. Time to go.       │   │
+    │     │                                                            │   │
+    │     │  ┌──────────────────────────────────────────────────────┐  │   │
+    │     │  │                                                      │  │   │
+    │     │  │         ████  FIRE  ████                             │  │   │
+    │     │  │       ██    ██    ██    ██                           │  │   │
+    │     │  │      █  ░░░░  ░░░░  ░░░░  █     PSU: *catches fire*  │  │   │
+    │     │  │     █  ░▒▒▒▒░░▒▒▒▒░░▒▒▒▒░  █                         │  │   │
+    │     │  │     █ ░▒▓▓▓▒░▒▓▓▓▒░▒▓▓▓▒░ █    HDD #1: *dies*        │  │   │
+    │     │  │     █  ░▒▒▒░  ░▒▒▒░  ░▒▒▒░ █                         │  │   │
+    │     │  │      █  ░░░    ░░░    ░░░ █    HDD #2: *also dies*   │  │   │
+    │     │  │       ██                ██                           │  │   │
+    │     │  │         ████████████████                             │  │   │
+    │     │  │              │││││                                   │  │   │
+    │     │  │         [ POWER SUPPLY ]                             │  │   │
+    │     │  │         "SUPER POWER 500W"                           │  │   │
+    │     │  │         (actually 180W)                              │  │   │
+    │     │  │                                                      │  │   │
+    │     │  └──────────────────────────────────────────────────────┘  │   │
+    │     │                                                            │   │
+    │     │  Both drives. Gone. Every patient record. Every bill.      │   │
+    │     │  Every prescription. Every medical image. Gone.            │   │
+    │     │                                                            │   │
+    │     │  The son is now in marketing.                              │   │
+    │     │                                                            │   │
+    │     │  ────────────────────────────────────────────────────────  │   │
+    │     │                                                            │   │
+    │     │  MORAL: "Good with computers" is a warning, not a          │   │
+    │     │         qualification.                                     │   │
+    │     │                                                            │   │
+    │     │  LESSON: Backup means DIFFERENT location. DIFFERENT        │   │
+    │     │          power. DIFFERENT building. DIFFERENT continent    │   │
+    │     │          if you can afford it.                             │   │
+    │     │                                                            │   │
+    │     │  TRUTH: The PSU was probably fine. The capacitors were     │   │
+    │     │         filled with fish sauce instead of electrolyte.     │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  ░▒▓█ T H E   B E R R I N I   P O W E R   M O V E █▓▒░     │   │
+    │     │                                                            │   │
+    │     │  São Paulo. Berrini. The office. A good day.               │   │
+    │     │                                                            │   │
+    │     │  I was contemplating life's important questions:           │   │
+    │     │                                                            │   │
+    │     │    ╭────────────────────────────────────────────────╮      │   │
+    │     │    │                                                │      │   │
+    │     │    │   Today's Lunch Dilemma:                       │      │   │
+    │     │    │                                                │      │   │
+    │     │    │   ┌─────────────┐     ┌─────────────┐          │      │   │
+    │     │    │   │ TOURNEDOS   │ vs  │CHATEAUBRIAND│          │      │   │
+    │     │    │   │  ═══════    │     │  ═══════    │          │      │   │
+    │     │    │   │   ████      │     │   ██████    │          │      │   │
+    │     │    │   │   ████      │     │   ██████    │          │      │   │
+    │     │    │   │   ▓▓▓▓      │     │   ▓▓▓▓▓▓    │          │      │   │
+    │     │    │   │  béarnaise  │     │  au poivre  │          │      │   │
+    │     │    │   └─────────────┘     └─────────────┘          │      │   │
+    │     │    │                                                │      │   │
+    │     │    ╰────────────────────────────────────────────────╯      │   │
+    │     │                                                            │   │
+    │     │  Then the door opens.                                      │   │
+    │     │                                                            │   │
+    │     │  A man enters. Server under his arm. Eyes wet. Lower       │   │
+    │     │  lip trembling. The universal posture of data loss.        │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────────────┐    │   │
+    │     │    │                                                  │    │   │
+    │     │    │         ╭──────────╮                             │    │   │
+    │     │    │         │ ░░░░░░░░ │ ← Server                    │    │   │
+    │     │    │         │ ░░░░░░░░ │   (probably a Dell)         │    │   │
+    │     │    │         │ ░░░░░░░░ │   (definitely dying)        │    │   │
+    │     │    │         ╰──────────╯                             │    │   │
+    │     │    │              ││                                  │    │   │
+    │     │    │         ╭────╯╰────╮                             │    │   │
+    │     │    │         │  T__T    │ ← Customer                  │    │   │
+    │     │    │         │  /|  |\  │   (definitely crying)       │    │   │
+    │     │    │         │  / \/ \  │                             │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │         "I need my data... please..."            │    │   │
+    │     │    │                                                  │    │   │
+    │     │    └──────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
+    │     │  I sigh. Another one.                                      │   │
+    │     │                                                            │   │
+    │     │  ╔════════════════════════════════════════════════════╗    │   │
+    │     │  ║  BRAZILIAN IT WISDOM, VERSE 7:                     ║    │   │
+    │     │  ║                                                    ║    │   │
+    │     │  ║  "Há dois tipos de HD:                             ║    │   │
+    │     │  ║   O que quebrou e o que VAI quebrar."              ║    │   │
+    │     │  ║                                                    ║    │   │
+    │     │  ║  "There are two kinds of hard drives:              ║    │   │
+    │     │  ║   The one that broke and the one that WILL break." ║    │   │
+    │     │  ╚════════════════════════════════════════════════════╝    │   │
+    │     │                                                            │   │
+    │     │  I take the drive. Install it in my lab. Ten minutes.      │   │
+    │     │                                                            │   │
+    │     │  PostgreSQL won't start. Core dump. Classic.               │   │
+    │     │  Install older version. Crosses fingers. Prayers to        │   │
+    │     │  the gods of magnetic storage.                             │   │
+    │     │                                                            │   │
+    │     │    $ pg_ctl start                                          │   │
+    │     │    waiting for server to start.... done                    │   │
+    │     │    server started                                          │   │
+    │     │                                                            │   │
+    │     │    $ psql -c "SELECT count(*) FROM important_data;"        │   │
+    │     │     count                                                  │   │
+    │     │    ────────                                                │   │
+    │     │     847293                                                 │   │
+    │     │    (1 row)                                                 │   │
+    │     │                                                            │   │
+    │     │  100% recovery. Pure luck. The bad sectors hit only        │   │
+    │     │  indexes and WAL files. The actual data? Untouched.        │   │
+    │     │  The database gods smiled upon this fool.                  │   │
+    │     │                                                            │   │
+    │     │  Fifteen minutes total. I name my price.                   │   │
+    │     │                                                            │   │
+    │     │  The customer's face changes. The tears dry instantly.     │   │
+    │     │                                                            │   │
+    │     │  "But... it only took fifteen minutes."                    │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────────────┐    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   CUSTOMER LOGIC FLOWCHART:                      │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   Was it fast? ──────────▶ Too expensive!        │    │   │
+    │     │    │        │                                         │    │   │
+    │     │    │        ▼                                         │    │   │
+    │     │    │   Was it slow? ──────────▶ Too expensive!        │    │   │
+    │     │    │        │                                         │    │   │
+    │     │    │        ▼                                         │    │   │
+    │     │    │   Did it fail? ──────────▶ Why am I paying?      │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   (There is no winning)                          │    │   │
+    │     │    │                                                  │    │   │
+    │     │    └──────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
+    │     │  I look at my watch. 12:47. Chateaubriand awaits.          │   │
+    │     │                                                            │   │
+    │     │  "I understand," I say, smiling. "You have options."       │   │
+    │     │                                                            │   │
+    │     │    ╔════════════════════════════════════════════════════╗  │   │
+    │     │    ║                                                    ║  │   │
+    │     │    ║   OPTION A: Pay the price. Leave with your data.   ║  │   │
+    │     │    ║                                                    ║  │   │
+    │     │    ║   OPTION B: You sit here. I go to lunch. When I    ║  │   │
+    │     │    ║             return in two hours, feeling generous  ║  │   │
+    │     │    ║             from my Chateaubriand, you can pay     ║  │   │
+    │     │    ║             the same price. But you will have      ║  │   │
+    │     │    ║             waited.                                ║  │   │
+    │     │    ║                                                    ║  │   │
+    │     │    ║   OPTION C: I type 'rm -rf' and you can tell your  ║  │   │
+    │     │    ║             boss the data was unrecoverable. No    ║  │   │
+    │     │    ║             charge for that.                       ║  │   │
+    │     │    ║                                                    ║  │   │
+    │     │    ╚════════════════════════════════════════════════════╝  │   │
+    │     │                                                            │   │
+    │     │  The wallet appeared so fast I thought it was a magic      │   │
+    │     │  trick.                                                    │   │
+    │     │                                                            │   │
+    │     │  I had the Chateaubriand. It was excellent.                │   │
+    │     │                                                            │   │
+    │     │  ────────────────────────────────────────────────────────  │   │
+    │     │                                                            │   │
+    │     │  MORAL: You're not paying for my fifteen minutes.          │   │
+    │     │         You're paying for my fifteen YEARS.                │   │
+    │     │                                                            │   │
+    │     │  LESSON: Never negotiate with a man whose lunch is         │   │
+    │     │          getting cold.                                     │   │
+    │     │                                                            │   │
+    │     │  TRUTH: The Chateaubriand was R$180.                       │   │
+    │     │         The recovery was considerably more.                │   │
+    │     │         Both were worth every centavo.                     │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │                                                                      │
     └──────────────────────────────────────────────────────────────────────┘
 
 
