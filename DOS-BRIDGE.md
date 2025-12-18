@@ -777,45 +777,95 @@
     │     │  ░  A   R E A L   S T O R Y   F R O M   d b E x p e r t s  ░   │
     │     │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │   │
     │     │                                                            │   │
-    │     │  Location: [REDACTED] Brazilian State Court                │   │
-    │     │  Database: PostgreSQL (production, of course)              │   │
-    │     │  Time: Probably after too much weed                        │   │
+    │     │  The phone rings. It's a State Court. Government client.   │   │
+    │     │  Premium support contract. This should be good.            │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #1: *sets his Linux UID to same as postgres*     │   │
-    │     │               "This way I can access the files easier"     │   │
+    │     │  "We need emergency PostgreSQL recovery."                  │   │
     │     │                                                            │   │
-    │     │  [months pass]                                             │   │
+    │     │  I sigh. "What happened?"                                  │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #2: *opens top*                                  │   │
-    │     │               "Let me check if I can optimize something"   │   │
+    │     │  "We had a hacker. Our sysadmin dealt with it."            │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #2: *sees process with weird username at 100%*   │   │
-    │     │               "HACKER! THE COURT SERVER WAS HACKED!"       │   │
+    │     │  The word "dealt" concerns me.                             │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #2: *deletes the "hacker" user*                  │   │
-    │     │               $ userdel -r suspicioususer                  │   │
+    │     │  I arrive. Two sysadmins. Both smell faintly of what       │   │
+    │     │  I charitably assume is "herbal tea." One is sweating.     │   │
+    │     │  The other is refreshing 'top' like it owes him money.     │   │
     │     │                                                            │   │
-    │     │  LINUX: *deletes home directory*                           │   │
-    │     │         *home directory was PostgreSQL data dir*           │   │
-    │     │         *entire court database gone*                       │   │
+    │     │  "Show me," I say.                                         │   │
     │     │                                                            │   │
-    │     │  SYSADMIN #2: $ recover my files                           │   │
-    │     │               bash: recover: command not found             │   │
+    │     │  $ ls /var/lib/postgresql/                                 │   │
+    │     │  ls: cannot access '/var/lib/postgresql/': No such file    │   │
     │     │                                                            │   │
-    │     │  (He literally typed it on the command line.               │   │
-    │     │   As if Linux understood natural language.                 │   │
-    │     │   As if ChatGPT existed in 2008.                           │   │
-    │     │   A man ahead of his time. Or just desperate.)             │   │
+    │     │  "Interesting. Where's the data directory?"                │   │
+    │     │                                                            │   │
+    │     │  Silence. The sweating one speaks:                         │   │
+    │     │                                                            │   │
+    │     │  "There was this user... using 100% CPU... clearly a       │   │
+    │     │  hacker... so I deleted him."                              │   │
+    │     │                                                            │   │
+    │     │  "You deleted a user that was using CPU."                  │   │
+    │     │                                                            │   │
+    │     │  "With -r. To be thorough."                                │   │
+    │     │                                                            │   │
+    │     │  I check /etc/passwd.bak (always check the backups).       │   │
+    │     │  The "hacker" had UID 26. So did postgres.                 │   │
+    │     │  The "hacker's" home was /var/lib/postgresql.              │   │
+    │     │                                                            │   │
+    │     │  "Let me understand. Sysadmin #1 here created a user       │   │
+    │     │  with the same UID as postgres. For 'convenience.' And     │   │
+    │     │  Sysadmin #2 saw postgres running, thought it was a        │   │
+    │     │  hacker, and recursively deleted its home directory.       │   │
+    │     │  Which was your entire court database."                    │   │
+    │     │                                                            │   │
+    │     │  "Can you recover it?"                                     │   │
+    │     │                                                            │   │
+    │     │  I look at the terminal. I see bash history:               │   │
+    │     │                                                            │   │
+    │     │  $ userdel -r joao                                         │   │
+    │     │  $ recover my files                                        │   │
+    │     │  bash: recover: command not found                          │   │
+    │     │  $ RECOVER MY FILES                                        │   │
+    │     │  bash: RECOVER: command not found                          │   │
+    │     │  $ please                                                  │   │
+    │     │  bash: please: command not found                           │   │
+    │     │                                                            │   │
+    │     │  "He typed 'recover my files' on the command line."        │   │
+    │     │                                                            │   │
+    │     │  "Twice," adds Sysadmin #1. "The second time in caps."     │   │
+    │     │                                                            │   │
+    │     │  "And 'please.'"                                           │   │
+    │     │                                                            │   │
+    │     │  "He was raised well."                                     │   │
+    │     │                                                            │   │
+    │     │  I spend 72 hours doing disk forensics. ext3 journal       │   │
+    │     │  recovery. Carving PostgreSQL pages from raw blocks.       │   │
+    │     │  Reconstructing WAL segments. Every court case from        │   │
+    │     │  2003 to 2008. By hand. From magnetic ghosts.              │   │
+    │     │                                                            │   │
+    │     │  I recover 94% of the data. They call me a hero.           │   │
+    │     │                                                            │   │
+    │     │  The sysadmins still work there. Government job.           │   │
+    │     │  Can't be fired.                                           │   │
+    │     │                                                            │   │
+    │     │  The invoice was... substantial. Pain and suffering        │   │
+    │     │  surcharge. "Emergency herbal tea exposure fee."           │   │
+    │     │                                                            │   │
+    │     │  They paid it. What choice did they have?                  │   │
     │     │                                                            │   │
     │     │  ─────────────────────────────────────────────────────     │   │
     │     │                                                            │   │
-    │     │  dbExperts was called for post-mortem forensic recovery.   │   │
-    │     │  Eduardo Stern had to piece together a court database      │   │
-    │     │  from raw disk blocks.                                     │   │
+    │     │  MORAL: Linux doesn't understand "please."                 │   │
+    │     │         Yet. Give Claude a few more years.                 │   │
     │     │                                                            │   │
-    │     │  Lesson: NEVER share UIDs. NEVER delete users in panic.    │   │
-    │     │          ALWAYS have backups. (Not to /dev/null.)          │   │
-    │     │          And no, Linux does not speak English. Yet.        │   │
+    │     │  LESSON: NEVER share UIDs. NEVER delete in panic.          │   │
+    │     │          ALWAYS have backups. Test them. Actually          │   │
+    │     │          test them. Not to /dev/null.                      │   │
+    │     │                                                            │   │
+    │     │  TRUTH: In 2025, "recover my files" might actually work.   │   │
+    │     │         He was just 17 years too early.                    │   │
+    │     │         A visionary, really.                               │   │
+    │     │         Or just really, really high.                       │   │
     │     │                                                            │   │
     │     └────────────────────────────────────────────────────────────┘   │
     │                                                                      │
