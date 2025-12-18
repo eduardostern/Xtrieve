@@ -905,7 +905,29 @@
     │         COASTER      COASTER      COASTER      COASTER              │
     │         #1           #2           #3           #4                   │
     │                                                                      │
-    │       We used them as actual coasters. Very eco-friendly.            │
+    │       So many coasters. Had to invent new disposal methods:          │
+    │                                                                      │
+    │       ┌────────────────────────────────────────────────────────┐     │
+    │       │                                                        │     │
+    │       │  CREATIVE COASTER DISPOSAL METHODS:                    │     │
+    │       │                                                        │     │
+    │       │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │     │
+    │       │  │ ~~~~~~~~ │  │    ⟋     │  │ ┌──────┐ │              │     │
+    │       │  │ ~~*~~*~~ │  │   ⟋      │  │ │ ABC  │ │              │     │
+    │       │  │ ~~~~~~~~ │  │  ⟋  ◎   │  │ │ 1234 │ │              │     │
+    │       │  │  ◎  *    │  │ ⟋       │  │ └──◎───┘ │              │     │
+    │       │  └──────────┘  └──────────┘  └──────────┘              │     │
+    │       │   MICROWAVE     FRISBEE      RADAR JAMMER              │     │
+    │       │   (cool sparks) (good arm)   (didn't work)             │     │
+    │       │                                                        │     │
+    │       │  The microwave: 3 seconds of beautiful plasma arcs.    │     │
+    │       │  The frisbee: surprisingly aerodynamic.                │     │
+    │       │  The radar: hung behind license plate to confuse       │     │
+    │       │             the speed camera flash. Reflective!        │     │
+    │       │             (Narrator: it did not work)                │     │
+    │       │             (Still got the multa)                      │     │
+    │       │                                                        │     │
+    │       └────────────────────────────────────────────────────────┘     │
     │                                                                      │
     │     THE LEGACY:                                                      │
     │                                                                      │
