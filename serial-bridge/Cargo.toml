@@ -1,0 +1,10 @@
+[package]
+name = "serial-bridge"
+version = "0.1.0"
+edition = "2021"
+description = "Bridge between DOSBox-X serial port and Xtrieve server"
+
+[workspace]
+
+[dependencies]
+# No dependencies - pure std library

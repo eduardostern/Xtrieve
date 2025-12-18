@@ -96,9 +96,16 @@ pub fn create(
         .ok_or(BtrieveError::Status(StatusCode::InvalidFileName))?;
 
     // Parse file specification from data buffer
-    // Format: record_length (2), page_size (2), num_keys (2), reserved (2), flags (4)
-    //         followed by key specs
-    if req.data_buffer.len() < 10 {
+    // Btrieve 5.x format:
+    //   0-1:   record_length
+    //   2-3:   page_size
+    //   4-5:   num_keys
+    //   6-7:   unused
+    //   8-11:  file_flags
+    //   12-13: reserved
+    //   14-15: preallocation
+    //   16+:   key specs (16 bytes each)
+    if req.data_buffer.len() < 16 {
         return Err(BtrieveError::Status(StatusCode::DataBufferTooShort));
     }
 
@@ -116,9 +123,9 @@ pub fn create(
         return Err(BtrieveError::Status(StatusCode::InvalidRecordLength));
     }
 
-    // Parse key specifications
+    // Parse key specifications (start at offset 16 in Btrieve 5.x)
     let mut keys = Vec::with_capacity(num_keys as usize);
-    let mut offset = 10;
+    let mut offset = 16;
 
     for _ in 0..num_keys {
         if offset + 16 > req.data_buffer.len() {
