@@ -1999,22 +1999,76 @@
     │     │                                                            │   │
     │     └────────────────────────────────────────────────────────────┘   │
     │                                                                      │
+    │     THINGS THAT CHANGED vs THINGS THAT LASTED:                       │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  WHAT CHANGED:                                             │   │
+    │     │                                                            │   │
+    │     │  ┌─────────────┐              ┌─────────────┐              │   │
+    │     │  │  RIVA 128   │  ─────────▶  │  RTX 4070   │              │   │
+    │     │  │   (1997)    │              │   (2023)    │              │   │
+    │     │  │    4 MB     │              │   12 GB     │              │   │
+    │     │  │  NVIDIA $1B │              │ NVIDIA $1T  │              │   │
+    │     │  └─────────────┘              └─────────────┘              │   │
+    │     │                                                            │   │
+    │     │  ┌─────────────┐              ┌─────────────┐              │   │
+    │     │  │  Pentium II │  ─────────▶  │ Ryzen X3D   │              │   │
+    │     │  │   233 MHz   │              │   5.7 GHz   │              │   │
+    │     │  └─────────────┘              └─────────────┘              │   │
+    │     │                                                            │   │
+    │     │  WHAT STAYED THE SAME:                                     │   │
+    │     │                                                            │   │
+    │     │  ┌─────────────────────────────────────────────────────┐   │   │
+    │     │  │                                                     │   │   │
+    │     │  │  ╔═══════════════════════════════════════════════╗  │   │   │
+    │     │  │  ║  CAMBRIDGE SOUNDWORKS MICROWORKS               ║  │   │   │
+    │     │  │  ║  by Henry Kloss                                ║  │   │   │
+    │     │  │  ║  ─────────────────────────────────────────     ║  │   │   │
+    │     │  │  ║                                                ║  │   │   │
+    │     │  │  ║     ┌───┐         ┌───────────┐    ┌───┐      ║  │   │   │
+    │     │  │  ║     │ ◐ │         │ ░░░░░░░░░ │    │ ◐ │      ║  │   │   │
+    │     │  │  ║     │   │         │ SUBWOOFER │    │   │      ║  │   │   │
+    │     │  │  ║     └───┘         │ ░░░░░░░░░ │    └───┘      ║  │   │   │
+    │     │  │  ║    LEFT           └───────────┘    RIGHT      ║  │   │   │
+    │     │  │  ║                                                ║  │   │   │
+    │     │  │  ║  Still running. Still sounds great.            ║  │   │   │
+    │     │  │  ║  Now on my kid's gaming rig. 30 years later.   ║  │   │   │
+    │     │  │  ║                                                ║  │   │   │
+    │     │  │  ╚═══════════════════════════════════════════════╝  │   │   │
+    │     │  │                                                     │   │   │
+    │     │  │  Also still running:                                │   │   │
+    │     │  │                                                     │   │   │
+    │     │  │  ☑ C (1972)                                         │   │   │
+    │     │  │  ☑ PostgreSQL (1996)                                │   │   │
+    │     │  │  ☑ Linux (1991)                                     │   │   │
+    │     │  │  ☑ Quality engineering                              │   │   │
+    │     │  │                                                     │   │   │
+    │     │  └─────────────────────────────────────────────────────┘   │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
     │     ╔════════════════════════════════════════════════════════════╗   │
     │     ║                                                            ║   │
     │     ║   "Frameworks come and go. Languages rise and fall.        ║   │
     │     ║    JavaScript frameworks have a half-life of 6 months.     ║   │
+    │     ║    GPUs go from 4MB to 12GB in 25 years.                   ║   │
     │     ║                                                            ║   │
-    │     ║    But C? PostgreSQL? Linux?                               ║   │
+    │     ║    But C? PostgreSQL? Linux? Henry Kloss speakers?         ║   │
     │     ║                                                            ║   │
     │     ║    They were here before you started.                      ║   │
     │     ║    They'll be here after you retire.                       ║   │
     │     ║    They'll be here when your grandchildren code.           ║   │
     │     ║                                                            ║   │
+    │     ║    From Riva 128 to RTX 4070,                              ║   │
+    │     ║    the speakers still work.                                ║   │
+    │     ║                                                            ║   │
     │     ║    From sequencing genomes to hooking INT 7Bh,             ║   │
     │     ║    it's the same machine underneath.                       ║   │
     │     ║                                                            ║   │
     │     ║    Learn the fundamentals.                                 ║   │
-    │     ║    They're the only thing that lasts."                     ║   │
+    │     ║    Build things that last.                                 ║   │
+    │     ║    They're the only thing that matters."                   ║   │
     │     ║                                                            ║   │
     │     ╚════════════════════════════════════════════════════════════╝   │
     │                                                                      │
