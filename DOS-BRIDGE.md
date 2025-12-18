@@ -771,6 +771,48 @@
     │               ╚══════════════════════════════════════╝               │
     │                                                                      │
     │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │   │
+    │     │  ░  A   R E A L   S T O R Y   F R O M   d b E x p e r t s  ░   │
+    │     │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │   │
+    │     │                                                            │   │
+    │     │  Location: [REDACTED] Brazilian State Court                │   │
+    │     │  Database: PostgreSQL (production, of course)              │   │
+    │     │  Time: Probably after too much weed                        │   │
+    │     │                                                            │   │
+    │     │  SYSADMIN #1: *sets his Linux UID to same as postgres*     │   │
+    │     │               "This way I can access the files easier"     │   │
+    │     │                                                            │   │
+    │     │  [months pass]                                             │   │
+    │     │                                                            │   │
+    │     │  SYSADMIN #2: *opens top*                                  │   │
+    │     │               "Let me check if I can optimize something"   │   │
+    │     │                                                            │   │
+    │     │  SYSADMIN #2: *sees process with weird username at 100%*   │   │
+    │     │               "HACKER! THE COURT SERVER WAS HACKED!"       │   │
+    │     │                                                            │   │
+    │     │  SYSADMIN #2: *deletes the "hacker" user*                  │   │
+    │     │               $ userdel -r suspicioususer                  │   │
+    │     │                                                            │   │
+    │     │  LINUX: *deletes home directory*                           │   │
+    │     │         *home directory was PostgreSQL data dir*           │   │
+    │     │         *entire court database gone*                       │   │
+    │     │                                                            │   │
+    │     │  SYSADMIN #2: "RECOVER MY FILES"                           │   │
+    │     │                                                            │   │
+    │     │  ─────────────────────────────────────────────────────     │   │
+    │     │                                                            │   │
+    │     │  dbExperts was called for post-mortem forensic recovery.   │   │
+    │     │  Eduardo Stern had to piece together a court database      │   │
+    │     │  from disk fragments.                                      │   │
+    │     │                                                            │   │
+    │     │  Lesson: NEVER share UIDs. NEVER delete users in panic.    │   │
+    │     │          ALWAYS have backups. (Not to /dev/null.)          │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │                                                                      │
     └──────────────────────────────────────────────────────────────────────┘
 
 
