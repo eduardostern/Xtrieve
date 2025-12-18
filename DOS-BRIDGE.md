@@ -416,6 +416,9 @@
         │      2400 bps. No MNP5. No error correction.               │
         │      Analog phone line. Pulse dial. Click-click-click.     │
         │                                                            │
+        │      X00.SYS loaded. Or BNU.COM. FOSSIL drivers.           │
+        │      INT 14h hooked. FidoNet ready. Mailer polling.        │
+        │                                                            │
         │      TELIX loaded. ANSI.SYS loaded. AT&F. ATZ. ATDT.       │
         │                                                            │
         │      Connecting to BBSes at 300 characters per second.     │
@@ -469,6 +472,8 @@
                     │   The DOS Era (1981-1995)           │
                     │   The Demoscene                     │
                     │   2400bps Modems (RIP)              │
+                    │   X00/BNU FOSSIL Drivers            │
+                    │   FidoNet (1:2:3)                   │
                     │                                      │
                     ╰──────────────────────────────────────╯
 
