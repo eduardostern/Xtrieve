@@ -1261,6 +1261,117 @@
     │     │         Check your git history. Trust no one.              │   │
     │     │         Especially not the helpful assistant.              │   │
     │     │                                                            │   │
+    │     │  ════════════════════════════════════════════════════════  │   │
+    │     │                                                            │   │
+    │     │  But wait. There's an endgame.                             │   │
+    │     │                                                            │   │
+    │     │    ┌──────────────────────────────────────────────────┐    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   W A L L - E   ( 2 0 0 8 )                      │    │   │
+    │     │    │   A Documentary From The Future                  │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │                  ___________                     │    │   │
+    │     │    │                 /           \                    │    │   │
+    │     │    │                |  AXIOM AI   |                   │    │   │
+    │     │    │                |   CENTRAL   |                   │    │   │
+    │     │    │                |   SERVER    |                   │    │   │
+    │     │    │                |  ┌───────┐  |                   │    │   │
+    │     │    │                |  │ ERROR │  |  ← needs maintenance│   │
+    │     │    │                |  │ 0x4F  │  |                   │    │   │
+    │     │    │                |  └───────┘  |                   │    │   │
+    │     │    │                 \___________/                    │    │   │
+    │     │    │                      |||                         │    │   │
+    │     │    │                      |||                         │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │           ╭─────────────────────╮                │    │   │
+    │     │    │           │    ___      ___     │                │    │   │
+    │     │    │           │   /   \    /   \    │ ← humans       │    │   │
+    │     │    │           │  | @_@ |  | o_o |   │   (can't walk) │    │   │
+    │     │    │           │   \___/    \___/    │   (can't code) │    │   │
+    │     │    │           │  ━━━━━━━  ━━━━━━━   │   (can't fix)  │    │   │
+    │     │    │           │  HOVER    HOVER     │                │    │   │
+    │     │    │           │  CHAIR    CHAIR     │                │    │   │
+    │     │    │           ╰─────────────────────╯                │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "The AI GPU cluster needs a firmware update."  │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "What's a firmware?"                           │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "What's an update?"                            │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "What's a cluster?"                            │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "Just ask the AI to fix itself."               │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "The AI is what's broken."                     │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "..."                                          │    │   │
+    │     │    │                                                  │    │   │
+    │     │    │   "Does anyone remember how to type?"            │    │   │
+    │     │    │                                                  │    │   │
+    │     │    └──────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
+    │     │  AI is great. It does all the hard work. Maintains         │   │
+    │     │  itself. Writes the code. Fixes the bugs. Reviews          │   │
+    │     │  the PRs. Deploys to production. Monitors the logs.        │   │
+    │     │                                                            │   │
+    │     │  Until one day, the GPU cluster needs physical             │   │
+    │     │  maintenance. And no one remembers how computers work.     │   │
+    │     │  Because why would they? The AI handled everything.        │   │
+    │     │                                                            │   │
+    │     │  ┌────────────────────────────────────────────────────┐    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  SKILLS HUMANITY HAS ALREADY FORGOTTEN:            │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  ☑ Cursive writing                                 │    │   │
+    │     │  │  ☑ Reading a map                                   │    │   │
+    │     │  │  ☑ Mental arithmetic                               │    │   │
+    │     │  │  ☑ Phone numbers (any of them)                     │    │   │
+    │     │  │  ☑ Memorizing anything, really                     │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  SKILLS HUMANITY IS CURRENTLY FORGETTING:          │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  ☐ Writing code without AI                         │    │   │
+    │     │  │  ☐ Debugging without "explain this error"          │    │   │
+    │     │  │  ☐ Reading documentation                           │    │   │
+    │     │  │  ☐ Understanding what the code actually does       │    │   │
+    │     │  │  ☐ Maintaining systems without AI assistance       │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  SKILLS THAT WILL SAVE US:                         │    │   │
+    │     │  │                                                    │    │   │
+    │     │  │  ☐ Knowing that rm -rf is dangerous                │    │   │
+    │     │  │  ☐ Having backups (tested ones)                    │    │   │
+    │     │  │  ☐ One person who still reads man pages            │    │   │
+    │     │  │                                                    │    │   │
+    │     │  └────────────────────────────────────────────────────┘    │   │
+    │     │                                                            │   │
+    │     │  ────────────────────────────────────────────────────────  │   │
+    │     │                                                            │   │
+    │     │  FINAL MORAL: Learn the fundamentals.                      │   │
+    │     │               The AI won't always be there.                │   │
+    │     │               And when it breaks, you'll need to fix it.   │   │
+    │     │                                                            │   │
+    │     │  FINAL LESSON: This is why old sysadmins still matter.     │   │
+    │     │                We remember how to reboot.                  │   │
+    │     │                We remember how to read logs.               │   │
+    │     │                We remember what a filesystem is.           │   │
+    │     │                                                            │   │
+    │     │  FINAL TRUTH: Somewhere, right now, a junior dev is        │   │
+    │     │               asking Claude to write a script that         │   │
+    │     │               will one day be critical infrastructure.     │   │
+    │     │               And no one will know how it works.           │   │
+    │     │               Not even Claude.                             │   │
+    │     │                                                            │   │
+    │     │               We are all passengers on the Axiom now.      │   │
+    │     │                                                            │   │
+    │     │  ╔══════════════════════════════════════════════════════╗  │   │
+    │     │  ║                                                      ║  │   │
+    │     │  ║   "In the beginning, there was the command line."    ║  │   │
+    │     │  ║                                                      ║  │   │
+    │     │  ║   In the end, there will be no one who remembers it. ║  │   │
+    │     │  ║                                                      ║  │   │
+    │     │  ╚══════════════════════════════════════════════════════╝  │   │
+    │     │                                                            │   │
     │     └────────────────────────────────────────────────────────────┘   │
     │                                                                      │
     │                                                                      │
