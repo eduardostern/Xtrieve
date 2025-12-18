@@ -390,9 +390,9 @@
         │                                                            │
         │   Your code STILL RUNS.                                    │
         │                                                            │
-        │                         ░░░░░░░░░░░░░░░░░░░░░░             │
-        │                         ░   R E S P E C T   ░             │
-        │                         ░░░░░░░░░░░░░░░░░░░░░░             │
+        │                       ░░░░░░░░░░░░░░░░░░░░░░░░░              │
+        │                       ░    R E S P E C T    ░              │
+        │                       ░░░░░░░░░░░░░░░░░░░░░░░░░              │
         │                                                            │
         └────────────────────────────────────────────────────────────┘
 
@@ -749,16 +749,16 @@
     │     Made no money.                                                   │
     │     But it was fun.                                                  │
     │                                                                      │
-    │     ┌────────────────────────────────────────────────────────────┐   │
-    │     │                                                            │   │
-    │     │   That's why we do this.                                   │   │
-    │     │   Not for the money. Not for the glory.                    │   │
-    │     │   For the pure joy of making things work.                  │   │
-    │     │                                                            │   │
-    │     │   From R&S BBS in 1991 to Xtrieve in 2025.                 │   │
-    │     │   The spirit never died.                                   │   │
-    │     │                                                            │   │
-    │     └────────────────────────────────────────────────────────────┘   │
+    │     ┌──────────────────────────────────────────────────────────┐     │
+    │     │                                                          │     │
+    │     │   That's why we do this.                                 │     │
+    │     │   Not for the money. Not for the glory.                  │     │
+    │     │   For the pure joy of making things work.                │     │
+    │     │                                                          │     │
+    │     │   From R&S BBS in 1991 to Xtrieve in 2025.               │     │
+    │     │   The spirit never died.                                 │     │
+    │     │                                                          │     │
+    │     └──────────────────────────────────────────────────────────┘     │
     │                                                                      │
     │                                                                      │
     │     To Renato, wherever you are.                                     │
