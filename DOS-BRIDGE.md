@@ -702,6 +702,79 @@
 
 
 
+                              T H E   B O F H
+                     B A S T A R D   O P E R A T O R
+                           F R O M   H E L L
+                     ─────────────────────────────────
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │     Simon Travaglia's legendary sysadmin. We all knew one.           │
+    │     We all WERE one, at some point.                                  │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  USER: "The backup is taking too long!"                    │   │
+    │     │                                                            │   │
+    │     │  BOFH: *changes backup destination to /dev/null*           │   │
+    │     │                                                            │   │
+    │     │  BOFH: "Fixed. It's really fast now."                      │   │
+    │     │                                                            │   │
+    │     │  USER: "Wow, thanks!"                                      │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  USER: "I lost all my files!"                              │   │
+    │     │                                                            │   │
+    │     │  BOFH: "Solar flares. Nothing we can do."                  │   │
+    │     │                                                            │   │
+    │     │  USER: "But it's cloudy outside..."                        │   │
+    │     │                                                            │   │
+    │     │  BOFH: "That's how bad the flares are."                    │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │  USER: "My password doesn't work!"                         │   │
+    │     │                                                            │   │
+    │     │  BOFH: "What's your password?"                             │   │
+    │     │                                                            │   │
+    │     │  USER: "It's 'password123'"                                │   │
+    │     │                                                            │   │
+    │     │  BOFH: *types* "There, I've reset it to something secure"  │   │
+    │     │                                                            │   │
+    │     │  USER: "What is it?"                                       │   │
+    │     │                                                            │   │
+    │     │  BOFH: "I can't tell you. Security policy."                │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │                                                                      │
+    │         The BOFH Toolkit:                                            │
+    │         ──────────────────                                           │
+    │                                                                      │
+    │         • The LART (Luser Attitude Readjustment Tool)                │
+    │         • The Alarm Button (drops elevator to basement)              │
+    │         • /dev/null (the universal solution)                         │
+    │         • "Have you tried turning it off and on again?"              │
+    │         • The halon fire suppression system                          │
+    │         • Whose fault is it? "Whose access card was used?"           │
+    │                                                                      │
+    │                                                                      │
+    │               ╔══════════════════════════════════════╗               │
+    │               ║   "I'm sorry, but your data was in   ║               │
+    │               ║   the old system. The one we         ║               │
+    │               ║   decommissioned. Yesterday."        ║               │
+    │               ╚══════════════════════════════════════╝               │
+    │                                                                      │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
                      ═══════════════════════════════════
                           T H E   C O N N E C T I O N
                      ═══════════════════════════════════
