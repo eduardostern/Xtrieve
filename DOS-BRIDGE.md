@@ -398,46 +398,374 @@
 
 
 
-                     ╔═══════════════════════════════════════╗
-                     ║   B A C K   I N   T H E   D A Y . . . ║
-                     ╚═══════════════════════════════════════╝
+          ╔═══════════════════════════════════════════════════════════╗
+          ║                                                           ║
+          ║    B A C K   I N   T H E   D A Y . . .   ( 1 9 9 1 )     ║
+          ║                                                           ║
+          ║         "The Upside Down Was Just a Phone Call Away"      ║
+          ║                                                           ║
+          ╚═══════════════════════════════════════════════════════════╝
 
 
-        ┌────────────────────────────────────────────────────────────┐
-        │                                                            │
-        │      ┌──────────────────────────────────────────────┐      │
-        │      │  ░░░ REALISTIC 2400 MODEM ░░░░░░░░░░░░░░░░░  │      │
-        │      │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │      │
-        │      │  █ RD  TD  CD  OH  AA  TR  SD  HS  █  PWR █  │      │
-        │      │  █ ●   ●   ○   ○   ○   ○   ●   ○   █      █  │      │
-        │      │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │      │
-        │      └──────────────────────────────────────────────┘      │
-        │                                                            │
-        │      2400 bps. No MNP5. No error correction.               │
-        │      Analog phone line. Pulse dial. Click-click-click.     │
-        │                                                            │
-        │      X00.SYS loaded. Or BNU.COM. FOSSIL drivers.           │
-        │      INT 14h hooked. FidoNet ready. Mailer polling.        │
-        │                                                            │
-        │      TELIX loaded. ANSI.SYS loaded. AT&F. ATZ. ATDT.       │
-        │                                                            │
-        │      Connecting to BBSes at 300 characters per second.     │
-        │      Watching ASCII art scroll down line by line.          │
-        │      Downloading a 50KB file took 3 minutes.               │
-        │      And we were GRATEFUL.                                 │
-        │                                                            │
-        │      Now DOSBox-X nullmodem gives us 115200 baud virtual   │
-        │      serial over TCP/IP. But the spirit is the same:       │
-        │                                                            │
-        │           ╔══════════════════════════════════════╗         │
-        │           ║  SERIAL IS SERIAL IS SERIAL IS LIFE  ║         │
-        │           ╚══════════════════════════════════════╝         │
-        │                                                            │
-        │      From Realistic Walkie-Talkies to DOSBox-X nullmodem.  │
-        │      The bits still flow. The protocol still works.        │
-        │      Some things never change.                             │
-        │                                                            │
-        └────────────────────────────────────────────────────────────┘
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │    ┌────────────────────────────────────────────────────────────┐    │
+    │    │  ░░░░░░ REALISTIC 2400 MODEM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │    │
+    │    │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │    │
+    │    │  █  RD   TD   CD   OH   AA   TR   SD   HS   █   PWR    █  │    │
+    │    │  █  ●    ●    ○    ○    ○    ○    ●    ○    █          █  │    │
+    │    │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │    │
+    │    └────────────────────────────────────────────────────────────┘    │
+    │                                                                      │
+    │         2400 bps. No MNP5. No V.42bis. No error correction.          │
+    │         Analog phone line. Pulse dial. Click-click-click-click.      │
+    │         Wait for dial tone. Hope nobody picks up the extension.      │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+                            T H E   S O U N D S
+                            ───────────────────
+
+              ╔══════════════════════════════════════════════════╗
+              ║                                                  ║
+              ║   ATDT 555-1234                                  ║
+              ║                                                  ║
+              ║   ♪ beeeeeeep ♪                                  ║
+              ║   ♪ BONG... BONG... BONG... BONG... ♪            ║
+              ║                                                  ║
+              ║   ... ring ... ring ...                          ║
+              ║                                                  ║
+              ║   ♪ EEEEEEEE-KSSSHHHHHH-BONG-KSSSHHH ♪           ║
+              ║   ♪ eeee-KSSSHHH-bweeeee-KSSSHHHHHHH ♪           ║
+              ║                                                  ║
+              ║   CONNECT 2400                                   ║
+              ║                                                  ║
+              ║   The most beautiful sound in the world.         ║
+              ║                                                  ║
+              ╚══════════════════════════════════════════════════╝
+
+
+
+                         T H E   B B S   E R A
+                         ─────────────────────
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │     ╔════════════════════════════════════════════════════════╗       │
+    │     ║           WELCOME TO THE TWILIGHT ZONE BBS             ║       │
+    │     ║          ════════════════════════════════════          ║       │
+    │     ║    Running RemoteAccess 2.50 on a 386DX/40 + 4MB RAM   ║       │
+    │     ║              USRobotics Sportster 14.4                 ║       │
+    │     ║                 Node 1 of 1 Lines                      ║       │
+    │     ╠════════════════════════════════════════════════════════╣       │
+    │     ║                                                        ║       │
+    │     ║   ┌─────────────────────────────────────────────┐      ║       │
+    │     ║   │ [F]ile Areas      [M]essage Bases           │      ║       │
+    │     ║   │ [D]oor Games      [B]ulletins               │      ║       │
+    │     ║   │ [C]hat with SysOp [U]ser List               │      ║       │
+    │     ║   │ [S]tatistics      [G]oodbye/Logoff          │      ║       │
+    │     ║   └─────────────────────────────────────────────┘      ║       │
+    │     ║                                                        ║       │
+    │     ║   Time Left: 45 min    Calls Today: 23                 ║       │
+    │     ║                                                        ║       │
+    │     ║   Select: _                                            ║       │
+    │     ║                                                        ║       │
+    │     ╚════════════════════════════════════════════════════════╝       │
+    │                                                                      │
+    │     This wasn't a terminal. This LOOKED like DOS.                    │
+    │     Hand-written ANSI ESC codes. Every color, every position.        │
+    │     printf("\x1B[1;37;44m"); /* Bright white on blue */              │
+    │     printf("\x1B[12;35H");   /* Row 12, Column 35 */                 │
+    │     No TheDraw. No ACiDDraw. Just raw escape sequences.              │
+    │                                                                      │
+    │     RemoteAccess with keyboard menus. F-keys worked.                 │
+    │     Callers thought they were running a local DOS program.           │
+    │     That was the magic.                                              │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
+                       T H E   B B S   S O F T W A R E
+                       ───────────────────────────────
+
+              ╔════════════════════════════════════════════════╗
+              ║                                                ║
+              ║   PCBoard .......... The Professional Choice   ║
+              ║   RemoteAccess ..... The Customizer's Dream    ║
+              ║   Wildcat! ......... The Friendly One          ║
+              ║   TBBS ............. The Serious Business      ║
+              ║   Maximus .......... The FidoNet Native        ║
+              ║   Opus ............. Where FOSSIL Was Born     ║
+              ║   RBBS-PC .......... The Pioneer (1983!)       ║
+              ║   Searchlight ...... The Database BBS          ║
+              ║   TriBBS ........... The Three-Node Wonder     ║
+              ║   Renegade ......... The Underground           ║
+              ║                                                ║
+              ╚════════════════════════════════════════════════╝
+
+
+
+                          T H E   D O O R S
+                          ─────────────────
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │                 ══════════════════════════════════                   │
+    │                   L E G E N D   O F   T H E                          │
+    │                     R E D   D R A G O N                              │
+    │                 ══════════════════════════════════                   │
+    │                                                                      │
+    │     The Dark Cloak Tavern                                            │
+    │     ─────────────────────                                            │
+    │                                                                      │
+    │     Seth Able the Bard sings of your adventures.                     │
+    │     You have 3 forest fights remaining today.                        │
+    │                                                                      │
+    │     [V]iew Stats  [F]orest  [S]laughter Others  [Q]uit               │
+    │                                                                      │
+    │   ──────────────────────────────────────────────────────────────     │
+    │                                                                      │
+    │     Door games. The reason to call back tomorrow.                    │
+    │                                                                      │
+    │     TradeWars 2002 ....... Space Trading Empire                      │
+    │     Barren Realms Elite .. Kingdom Conquest                          │
+    │     Usurper .............. Fantasy Combat                            │
+    │     Operation: Overkill .. Post-Apocalyptic RPG                      │
+    │     Food Fight ........... Just Pure Chaos                           │
+    │     Global War ........... Nuclear Diplomacy                         │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
+                    F I D O N E T   -   T H E   F I R S T
+                          S O C I A L   N E T W O R K
+                    ─────────────────────────────────────
+
+              ┌────────────────────────────────────────────────┐
+              │                                                │
+              │         ┌──────────────────────────┐           │
+              │         │  ██████╗ ██╗██████╗  ██████╗         │
+              │         │  █╔════╝ ██║██╔══██╗██╔═══██╗        │
+              │         │  █████╗  ██║██║  ██║██║   ██║        │
+              │         │  █╔══╝   ██║██║  ██║██║   ██║        │
+              │         │  █║      ██║██████╔╝╚██████╔╝        │
+              │         │  ╚╝      ╚═╝╚═════╝  ╚═════╝         │
+              │         │      N   E   T                       │
+              │         └──────────────────────────┘           │
+              │                                                │
+              │    Zone:Net/Node.Point                         │
+              │    1:105/42.0                                  │
+              │                                                │
+              │    Echomail: Global discussions before         │
+              │    the Internet made it easy.                  │
+              │                                                │
+              │    NetMail: Person to person, routed           │
+              │    through nodes at 2:00 AM when               │
+              │    long distance was cheap.                    │
+              │                                                │
+              │    The FOSSIL driver made it possible.         │
+              │    X00 and BNU were the backbone.              │
+              │    FrontDoor polling through the night.        │
+              │                                                │
+              └────────────────────────────────────────────────┘
+
+
+
+                        T H E   A N S I   A R T
+                        ───────────────────────
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │     CONFIG.SYS:                                                      │
+    │     ───────────                                                      │
+    │     DEVICE=C:\DOS\ANSI.SYS                                           │
+    │                                                                      │
+    │     Without this line, the BBS was just text.                        │
+    │     With it, the BBS was ART.                                        │
+    │                                                                      │
+    │   ──────────────────────────────────────────────────────────────     │
+    │                                                                      │
+    │     TheDraw 4.63 ....... The Standard                                │
+    │     ACiDDraw ........... The Scene Tool                              │
+    │     PabloDraw .......... The Modern Revival                          │
+    │                                                                      │
+    │     Or... you just wrote the escape codes by hand:                   │
+    │                                                                      │
+    │     \x1B[0m      Reset                                               │
+    │     \x1B[1m      Bright/Bold                                         │
+    │     \x1B[5m      Blink (the controversy!)                            │
+    │     \x1B[30-37m  Foreground color                                    │
+    │     \x1B[40-47m  Background color                                    │
+    │     \x1B[row;colH Cursor position                                    │
+    │     \x1B[2J     Clear screen                                         │
+    │     \x1B[K      Clear to end of line                                 │
+    │                                                                      │
+    │     Every byte mattered at 2400 bps.                                 │
+    │     Every color was a choice.                                        │
+    │     Every screen was a canvas.                                       │
+    │                                                                      │
+    │     The ANSI art groups:                                             │
+    │     ACiD Productions ... iCE ... DARK ... TRiBE ... FUEL             │
+    │                                                                      │
+    │     Monthly artpacks. .NFO files. Scene drama.                       │
+    │     A whole culture transmitted at 300 chars/second.                 │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
+                     T H E   D O W N L O A D   A R E A
+                     ─────────────────────────────────
+
+              ╔════════════════════════════════════════════════╗
+              ║                                                ║
+              ║   File Area 23: GAMES - SHAREWARE              ║
+              ║   ═══════════════════════════════              ║
+              ║                                                ║
+              ║   DOOM.ZIP ...... 2,365,478 bytes .. 16 min    ║
+              ║   WOLF3D.ZIP .... 1,234,567 bytes ..  8 min    ║
+              ║   COMMANDER.ZIP .   456,789 bytes ..  3 min    ║
+              ║                                                ║
+              ║   Download DOOM at 2400 bps?                   ║
+              ║   That's 16 minutes if nobody picks up         ║
+              ║   the phone. Better use ZMODEM with resume.    ║
+              ║                                                ║
+              ║   Protocols:                                   ║
+              ║   [X]Modem ... The Original                    ║
+              ║   [Y]Modem ... The Batch                       ║
+              ║   [Z]Modem ... The King (with resume!)         ║
+              ║   [K]ermit ... The Academic                    ║
+              ║                                                ║
+              ║   "Your download will continue where           ║
+              ║    it left off next time you call."            ║
+              ║                                                ║
+              ║   ZMODEM resume saved HOURS of our lives.      ║
+              ║                                                ║
+              ╚════════════════════════════════════════════════╝
+
+
+
+                        T H E   T E R M I N A L S
+                        ─────────────────────────
+
+              ┌────────────────────────────────────────────────┐
+              │                                                │
+              │   TELIX 3.15 ........ The Power User's Choice  │
+              │   Procomm Plus ...... The Corporate Standard   │
+              │   Qmodem ............ The Feature-Rich         │
+              │   Terminate ......... The Memory Master        │
+              │   Telemate .......... The Windows of DOS       │
+              │   BitCom ............ The Simple One           │
+              │   COM.EXE ........... You're hardcore          │
+              │                                                │
+              │   Dialing directory. Script language.          │
+              │   Capture buffer. Scroll-back.                 │
+              │   The tools of the night owl.                  │
+              │                                                │
+              └────────────────────────────────────────────────┘
+
+
+
+                     ═══════════════════════════════════
+                          T H E   C O N N E C T I O N
+                     ═══════════════════════════════════
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │      X00.SYS loaded. Or BNU.COM. The FOSSIL drivers.                 │
+    │      INT 14h hooked. Serial port abstracted.                         │
+    │      FidoNet mailer ready. Polling at 2 AM.                          │
+    │                                                                      │
+    │      BTRSERL.EXE does the same thing.                                │
+    │      INT 7Bh hooked. Btrieve abstracted.                             │
+    │      Xtrieve server ready. Protocol flowing.                         │
+    │                                                                      │
+    │      ╔══════════════════════════════════════════════════════════╗    │
+    │      ║                                                          ║    │
+    │      ║   1991: X00/BNU hook INT 14h for serial abstraction      ║    │
+    │      ║   2025: BTRSERL hooks INT 7Bh for database abstraction   ║    │
+    │      ║                                                          ║    │
+    │      ║   Same pattern. Same TSR magic. Same spirit.             ║    │
+    │      ║                                                          ║    │
+    │      ║   The FOSSIL philosophy lives on.                        ║    │
+    │      ║                                                          ║    │
+    │      ╚══════════════════════════════════════════════════════════╝    │
+    │                                                                      │
+    │      Now DOSBox-X nullmodem gives us 115200 baud virtual serial      │
+    │      over TCP/IP. From Realistic modems to virtual serial ports.     │
+    │      From pulse dial to TCP sockets.                                 │
+    │                                                                      │
+    │                ╔══════════════════════════════════════╗              │
+    │                ║  SERIAL IS SERIAL IS SERIAL IS LIFE  ║              │
+    │                ╚══════════════════════════════════════╝              │
+    │                                                                      │
+    │      The bits still flow. The protocols still work.                  │
+    │      The TSRs still hook interrupts.                                 │
+    │      Some things never change.                                       │
+    │                                                                      │
+    │      From BBSes to databases. From FidoNet to Xtrieve.               │
+    │      The architecture endures.                                       │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+
+
+
+                    ╔═══════════════════════════════════════════╗
+                    ║                                           ║
+                    ║          D E D I C A T E D   T O          ║
+                    ║                                           ║
+                    ╚═══════════════════════════════════════════╝
+
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │                                                                      │
+    │           ██████╗        ██╗       ███████╗                          │
+    │           ██╔══██╗      ██╔╝       ██╔════╝                          │
+    │           ██████╔╝     ██╔╝        ███████╗                          │
+    │           ██╔══██╗    ██╔╝              ██║                          │
+    │           ██║  ██║   ██╔╝          ███████║                          │
+    │           ╚═╝  ╚═╝   ╚═╝           ╚══════╝                          │
+    │                                                                      │
+    │                    ══════════════════════════                        │
+    │                          B   B   S                                   │
+    │                    ══════════════════════════                        │
+    │                                                                      │
+    │                                                                      │
+    │     2 Lines. RemoteAccess. Higienópolis, São Paulo.                  │
+    │                                                                      │
+    │     Co-SysOps:                                                       │
+    │       R - Renato Retz de Carvalho                                    │
+    │       S - Eduardo Stern                                              │
+    │                                                                      │
+    │     Running from Renato's grandmother's apartment.                   │
+    │     Hand-coded ANSI menus that looked like DOS, not a terminal.      │
+    │     Keyboard navigation. F-keys that worked.                         │
+    │                                                                      │
+    │     Made no money.                                                   │
+    │     But it was fun.                                                  │
+    │                                                                      │
+    │     ┌────────────────────────────────────────────────────────────┐   │
+    │     │                                                            │   │
+    │     │   That's why we do this.                                   │   │
+    │     │   Not for the money. Not for the glory.                    │   │
+    │     │   For the pure joy of making things work.                  │   │
+    │     │                                                            │   │
+    │     │   From R&S BBS in 1991 to Xtrieve in 2025.                 │   │
+    │     │   The spirit never died.                                   │   │
+    │     │                                                            │   │
+    │     └────────────────────────────────────────────────────────────┘   │
+    │                                                                      │
+    │                                                                      │
+    │     To Renato, wherever you are.                                     │
+    │     We're still hooking interrupts.                                  │
+    │                                                                      │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
 
 
 
@@ -467,13 +795,18 @@
                     │   I N S P I R E D   B Y              │
                     │   ─────────────────                  │
                     │                                      │
+                    │   R&S BBS, Higienópolis (1991)      │
                     │   Btrieve Technologies (RIP)        │
                     │   Borland International (RIP)       │
+                    │   RemoteAccess / PCBoard / TBBS     │
                     │   The DOS Era (1981-1995)           │
-                    │   The Demoscene                     │
+                    │   The Demoscene & ANSI Art Scene    │
                     │   2400bps Modems (RIP)              │
                     │   X00/BNU FOSSIL Drivers            │
-                    │   FidoNet (1:2:3)                   │
+                    │   FidoNet (Zone 4: South America)   │
+                    │   Legend of the Red Dragon          │
+                    │   All the SysOps who stayed up      │
+                    │   waiting for that 2 AM poll        │
                     │                                      │
                     ╰──────────────────────────────────────╯
 
