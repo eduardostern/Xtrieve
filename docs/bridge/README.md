@@ -163,6 +163,76 @@ The bridge is transparent - it forwards ALL operation codes to xtrieved. The fol
 | 26 | VERSION | Get Btrieve version info |
 | 28 | RESET | Reset session state |
 
+## Windows 98SE Native Support
+
+For running on **real Windows 98SE** (not DOSBox-X), use the COM-to-TCP bridge:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Windows 98SE Machine                          │
+├─────────────────────────────────────────────────────────────────┤
+│  DOS App → BTRSERL.EXE → COM1 → com0com → COM2 → XTRIEVE.EXE    │
+│                                                      │           │
+│                                                      │ Winsock   │
+└──────────────────────────────────────────────────────┼───────────┘
+                                                       │
+                                                       ▼
+                                               xtrieved (remote)
+```
+
+### Requirements
+
+1. **com0com** - Virtual COM port driver (creates COM1 ↔ COM2 pair)
+2. **XTRIEVE.EXE** - Windows bridge (reads COM2, sends TCP)
+3. **BTRSERL.EXE** - DOS TSR (writes to COM1)
+
+### Setup
+
+1. Install com0com and create a virtual pair (COM1 ↔ COM2)
+2. Copy files to `C:\XTRIEVE\`:
+   - `XTRIEVE.EXE` (from windows-bridge/)
+   - `XTRIEVE.INI` (configure server address)
+   - `BTRSERL.EXE` (from dos-client/)
+
+3. Edit `XTRIEVE.INI`:
+   ```ini
+   [Server]
+   Address=192.168.1.100
+   Port=7419
+
+   [COM]
+   Port=COM2
+   ```
+
+4. Run:
+   ```batch
+   REM Start Windows bridge
+   START C:\XTRIEVE\XTRIEVE.EXE
+
+   REM Load DOS TSR
+   C:\XTRIEVE\BTRSERL.EXE
+
+   REM Run your application
+   C:\MYAPP\MYAPP.EXE
+   ```
+
+### Compiling XTRIEVE.EXE
+
+Two versions available (C and Delphi/Pascal):
+
+```batch
+REM Borland C++ 5.5
+BCC32 -W -O2 XTRIEVE.C WSOCK32.LIB
+
+REM Delphi 3/5/7
+DCC32 XTRIEVE.DPR
+
+REM Free Pascal
+FPC -Mdelphi XTRIEVE.DPR
+```
+
+See `windows-bridge/README.TXT` for more details.
+
 ## Documentation
 
 - [Protocol Specification](PROTOCOL.md) - Wire protocol details

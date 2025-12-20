@@ -1,0 +1,64 @@
+# MAKEFILE for Xtrieve COM-to-TCP Bridge
+#
+# For Borland C++ 5.5:
+#   make -f MAKEFILE
+#
+# For Delphi:
+#   make -f MAKEFILE delphi
+#
+# For Free Pascal:
+#   make -f MAKEFILE fpc
+
+# Borland C++ 5.5 settings
+CC = bcc32
+CFLAGS = -W -O2 -w-par
+LIBS = wsock32.lib
+
+# Delphi settings
+DCC = dcc32
+DFLAGS = -$O+ -$W+
+
+# Free Pascal settings
+FPC = fpc
+FPCFLAGS = -Mdelphi -O2
+
+# Targets
+TARGET_C = XTRIEVE.EXE
+TARGET_PAS = XTRIEVE_PAS.EXE
+
+# Source files
+SRCS_C = XTRIEVE.C
+SRCS_PAS = XTRIEVE.DPR
+
+# Build C version (default)
+$(TARGET_C): $(SRCS_C)
+	$(CC) $(CFLAGS) -e$(TARGET_C) $(SRCS_C) $(LIBS)
+
+# Build Delphi version
+delphi: $(SRCS_PAS)
+	$(DCC) $(DFLAGS) $(SRCS_PAS)
+
+# Build Free Pascal version
+fpc: $(SRCS_PAS)
+	$(FPC) $(FPCFLAGS) -o$(TARGET_PAS) $(SRCS_PAS)
+
+# Build all
+all: $(TARGET_C) delphi
+
+# Clean
+clean:
+	del *.obj
+	del *.tds
+	del *.dcu
+	del *.o
+	del *.ppu
+	del $(TARGET_C)
+	del $(TARGET_PAS)
+	del XTRIEVE.EXE
+
+# Install (copy to destination)
+install: $(TARGET_C)
+	copy XTRIEVE.EXE C:\XTRIEVE\
+	copy XTRIEVE.INI C:\XTRIEVE\
+
+.PHONY: clean install delphi fpc all
