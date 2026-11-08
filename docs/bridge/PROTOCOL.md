@@ -64,13 +64,10 @@ This allows recovery from any desync condition - the bridge simply discards byte
 
 ## Position Block
 
-The 128-byte position block contains:
-
-| Offset | Size | Description |
-|--------|------|-------------|
-| 0 | 4 | File handle/identifier |
-| 4 | 60 | Reserved |
-| 64 | 64 | File path (null-terminated) |
+The 128-byte position block is the native Btrieve/N 5.10a caller/FCB state and
+is passed through unchanged. The server owns the handle at offset `0x34`;
+bytes `0x40..0x7F` are preserved. There is no path or session ID in the block.
+Each serial/TCP connection is one session.
 
 ## Example Transaction
 
@@ -81,11 +78,12 @@ BB BB          # Sync marker
 [128 bytes]    # Position block (zeros)
 04 00 00 00    # Data length: 4
 00 00 00 00    # Data: zeros
-00 00          # Key length: 0
-00 00          # Key number: 0
+50 00          # Key length: 80 (bridge fallback)
+00 00 ...      # Key buffer
+FF FF          # Key number: -1 (normal Open)
 08 00          # Path length: 8
 54 45 53 54    # Path: "TEST"
-2E 44 41 54    # Path: ".DAT"
+2E 42 54 52    # Path: ".BTR"
 00 00          # Lock bias: 0
 ```
 

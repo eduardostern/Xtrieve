@@ -48,7 +48,7 @@ Opens an existing Btrieve file for access.
 |-------|-------|
 | operation | 0 |
 | file_path | Path to the .dat file |
-| key_number | Open mode (-1 = normal, -2 = read-only, -3 = exclusive) |
+| key_number | Open mode (-1 = normal, -2 = read-only, -3 = verify, -4 = exclusive) |
 
 **Response:**
 | Field | Description |
@@ -110,7 +110,7 @@ client.execute(BtrieveRequest {
 **Notes:**
 - Always close files when done
 - Closing releases all record locks held by this session
-- Closing a file in a transaction does NOT abort the transaction
+- Genuine 5.10a returns status 41 if Close is issued while this session has an active transaction; End or Abort first.
 
 ---
 
@@ -125,25 +125,30 @@ Creates a new Btrieve file with specified structure.
 | file_path | Path for new file |
 | data_buffer | File specification (see below) |
 
-**File Specification Format:**
+**File Specification Format (genuine 5.10a):**
 ```
 Offset  Size  Description
 0       2     Record length (bytes)
 2       2     Page size (512, 1024, 2048, or 4096)
 4       2     Number of keys
 6       4     Reserved (set to 0)
-10      16*N  Key specifications (N = number of keys)
+10      2     File flags
+12      2     Reserved
+14      2     Preallocation pages
+16      16*N  Key specifications (N = number of keys)
+[265]         Optional ACS after all key blocks if any key sets 0x0020
 ```
 
-**Key Specification Format (16 bytes each):**
+**Key Specification Format (16 bytes per segment):**
 ```
 Offset  Size  Description
-0       2     Key position (byte offset in record)
+0       2     Key position (1-based byte offset in record)
 2       2     Key length
 4       2     Key flags (see below)
-6       1     Key type (see below)
-7       1     Null value
-8       8     Reserved
+6       4     Reserved
+10      1     Key type (see below)
+11      1     Null value
+12      4     Reserved
 ```
 
 **Key Flags:**
@@ -154,9 +159,11 @@ Offset  Size  Description
 | 0x0004 | Binary key (not sorted as string) |
 | 0x0008 | Null key (all nulls = no index entry) |
 | 0x0010 | Segmented key (continues in next spec) |
-| 0x0020 | Descending order |
-| 0x0040 | Supplemental key |
-| 0x0080 | Extended type |
+| 0x0020 | Alternate collating sequence |
+| 0x0040 | Descending order |
+| 0x0080 | Supplemental key |
+| 0x0100 | Extended type |
+| 0x0200 | Manual key |
 
 **Key Types:**
 | Value | Type |
@@ -179,35 +186,31 @@ Offset  Size  Description
 **Example:**
 ```rust
 fn build_file_spec(record_len: u16, page_size: u16, keys: &[(u16, u16, u16, u8)]) -> Vec<u8> {
-    let mut buf = Vec::new();
+    let mut buf = vec![0u8; 16];
+    buf[0..2].copy_from_slice(&record_len.to_le_bytes());
+    buf[2..4].copy_from_slice(&page_size.to_le_bytes());
+    buf[4..6].copy_from_slice(&(keys.len() as u16).to_le_bytes());
 
-    // Header
-    buf.extend_from_slice(&record_len.to_le_bytes());
-    buf.extend_from_slice(&page_size.to_le_bytes());
-    buf.extend_from_slice(&(keys.len() as u16).to_le_bytes());
-    buf.extend_from_slice(&[0u8; 4]);  // Reserved
-
-    // Key specs
     for (pos, len, flags, key_type) in keys {
-        buf.extend_from_slice(&pos.to_le_bytes());
-        buf.extend_from_slice(&len.to_le_bytes());
-        buf.extend_from_slice(&flags.to_le_bytes());
-        buf.push(*key_type);
-        buf.push(0);  // Null value
-        buf.extend_from_slice(&[0u8; 8]);  // Reserved
+        let mut block = [0u8; 16];
+        block[0..2].copy_from_slice(&pos.to_le_bytes());
+        block[2..4].copy_from_slice(&len.to_le_bytes());
+        block[4..6].copy_from_slice(&flags.to_le_bytes());
+        block[10] = *key_type;
+        block[11] = 0; // null value
+        buf.extend_from_slice(&block);
     }
-
     buf
 }
 
 // Create file with 100-byte records, 4KB pages, one key
 let spec = build_file_spec(100, 4096, &[
-    (0, 8, 0x0001, 14),  // Offset 0, 8 bytes, duplicates OK, unsigned binary
+    (1, 8, 0x0001, 14),  // 1-based offset 1, 8 bytes, duplicates OK, unsigned
 ]);
 
 client.execute(BtrieveRequest {
     operation_code: 14,
-    file_path: "newfile.dat".to_string(),
+    file_path: "newfile.btr".to_string(),
     data_buffer: spec,
     ..Default::default()
 })?;
@@ -224,23 +227,25 @@ Retrieves file statistics and structure information.
 |-------|-------|
 | operation | 15 |
 | position_block | Handle from Open |
-| data_buffer | Empty buffer (will receive stats) |
+| data_buffer | Zero-filled output capacity (at least 16 + 16*segments + ACS) |
 
 **Response:**
 | Field | Description |
 |-------|-------------|
-| data_buffer | File statistics (same format as Create spec, plus record count) |
+| data_buffer | Genuine 5.10a Stat image |
 
-**Extended Stat Format:**
+**Stat Format:**
 ```
 Offset  Size  Description
 0       2     Record length
 2       2     Page size
 4       2     Number of keys
 6       4     Record count
-10      2     Unused pages
-12      4     Flags
-16+     16*N  Key specifications
+10      2     File flags
+12      2     Reserved
+14      2     Unused pages
+16+     16*N  Key specification blocks (one per segment)
+[265]         ACS, when present
 ```
 
 ---

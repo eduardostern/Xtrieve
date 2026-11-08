@@ -2,11 +2,11 @@
 //!
 //! Provides a Btrieve-compatible API for accessing Xtrieve database files.
 
-pub mod client;
 pub mod btrieve;
+pub mod client;
 
-pub use client::{XtrieveClient, BtrieveRequest, BtrieveResponse};
+pub use btrieve::{BtrieveFile, BtrieveRecord};
 #[cfg(feature = "async")]
 pub use client::AsyncXtrieveClient;
-pub use btrieve::{BtrieveFile, BtrieveRecord};
-pub use xtrieve_engine::{BtrieveError, BtrieveResult, StatusCode};
+pub use client::{BtrieveRequest, BtrieveResponse, XtrieveClient};
+pub use xtrieve_engine::{status_codes, BtrieveError, BtrieveResult, Status};

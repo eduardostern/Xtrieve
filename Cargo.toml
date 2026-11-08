@@ -4,6 +4,8 @@ members = [
     "xtrieve-engine",
     "xtrieved",
     "xtrieve-client",
+    "third_party/btr-format",
+    "third_party/btr-engine",
 ]
 
 [workspace.package]
@@ -50,6 +52,8 @@ toml = "0.8"
 # Internal crates
 xtrieve-engine = { path = "xtrieve-engine" }
 xtrieve-client = { path = "xtrieve-client" }
+btr-format = { path = "third_party/btr-format" }
+btr-engine = { path = "third_party/btr-engine" }
 
 [profile.release]
 lto = true

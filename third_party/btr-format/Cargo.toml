@@ -1,0 +1,11 @@
+[package]
+name = "btr-format"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT OR Apache-2.0"
+description = "Clean-room Btrieve/N 5.10a .BTR reader and writer"
+
+[dependencies]
+serde = { version = "=1.0.229", features = ["derive"] }
+thiserror = "=2.0.20"

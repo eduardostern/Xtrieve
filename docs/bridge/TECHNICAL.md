@@ -29,8 +29,8 @@
 | Property | Value |
 |----------|-------|
 | **Language** | Rust 2021 |
-| **Compatibility** | Btrieve 5.10 |
-| **File Format** | Native Btrieve .DAT |
+| **Compatibility** | Btrieve/N 5.10a |
+| **File Format** | Native Btrieve .BTR |
 | **Page Sizes** | 512, 1024, 2048, 4096 bytes |
 | **Key Types** | String, Integer, Float, etc. |
 

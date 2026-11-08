@@ -1,19 +1,32 @@
 # Xtrieve
 
-A Btrieve 5.1 compatible ISAM database engine for modern systems.
+A Btrieve/N 5.10a compatible ISAM database engine for modern systems.
 
-Xtrieve implements the binary file format and operation codes of Novell/Pervasive Btrieve 5.1, allowing legacy applications to access Btrieve data files on macOS and Linux.
+Xtrieve now uses the clean-room byte-exact Btrieve/N 5.10a engine in
+`third_party/btr-engine`. Files are genuine single-file `.BTR` databases with
+native FCR, multi-level B-trees, variable/compressed records, owner
+encryption, native 128-byte position blocks, and real `.PRE`/`.TRN`
+transaction artifacts.
+
+**Breaking change:** Xtrieve's old custom `.DAT`/`.IX#` storage is no longer
+readable. There is no migration tool; create new `.BTR` files with the Create
+operation. The old files are left untouched.
 
 ## Features
 
-- **Btrieve 5.1 Compatible** - Read/write original Btrieve 5.1 file format
-- **Full ISAM Operations** - Insert, Update, Delete, GetEqual, GetNext, GetPrevious, GetFirst, GetLast
-- **B+ Tree Indexes** - Multiple keys per file with duplicates support
-- **Transaction Support** - Begin, End, Abort with ACID isolation
-- **Record Locking** - Single record and multi-record locks
-- **Lightweight Binary Protocol** - Sub-megabyte server binary (656 KB)
-- **Sync & Async Clients** - Both blocking and tokio-based async clients
-- **DOS Bridge** - Run original DOS Btrieve apps via serial-to-TCP bridge
+- **Btrieve/N 5.10a engine** - genuine file format, opcodes, statuses, and
+  position blocks
+- **Full ISAM operations** - Insert, Update, Delete, keyed Gets, Step,
+  Get Position/Direct, Stat, Extend, owner operations, supplemental indexes,
+  and extended get/step/insert
+- **Real transactions** - per-session Begin/End/Abort, `.PRE` images,
+  `BTRIEVE.TRN`, and crash recovery on Open
+- **Record locking** - in-process single/multiple record locks (wait biases
+  do not block; they return status 84)
+- **Multi-session server** - one session per TCP connection; disconnect
+  aborts the session's transaction and closes its handles
+- **Sync & async clients** - blocking and tokio-based client APIs
+- **DOS bridge** - original DOS Btrieve applications via the serial bridge
 
 ## DOS Bridge
 
@@ -52,9 +65,9 @@ See [docs/bridge/](docs/bridge/) for complete documentation.
 │  Raw TCP Server                                         │
 ├─────────────────────────────────────────────────────────┤
 │  xtrieve-engine                                         │
-│  - Operation Dispatcher (Btrieve opcodes 0-50+)         │
-│  - File Manager (page cache, record locking)            │
-│  - Storage Engine (B+ tree, FCR, pages, records)        │
+│  - Session-aware request adapter                        │
+│  - Mutex<btr-engine::Engine>                            │
+│  - third_party/btr-format + btr-engine                  │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -65,9 +78,6 @@ See [docs/bridge/](docs/bridge/) for complete documentation.
 ```bash
 # Build all crates (optimized release build)
 cargo build --release
-
-# Binary size: ~656 KB (vs 3.6 MB with gRPC)
-ls -lh target/release/xtrieved
 ```
 
 ### Run Server
@@ -79,42 +89,30 @@ ls -lh target/release/xtrieved
 
 ### Client Usage
 
-**Sync Client:**
 ```rust
-use xtrieve_client::{XtrieveClient, BtrieveRequest};
+use xtrieve_client::btrieve::{create_file, BtrieveFile, KeyDefinition};
+use xtrieve_client::XtrieveClient;
 
-let mut client = XtrieveClient::connect("127.0.0.1:7419")?;
+create_file(
+    XtrieveClient::connect("127.0.0.1:7419")?,
+    "mydata.btr",
+    64,   // record length
+    1024, // page size
+    vec![KeyDefinition::string(1, 4, false, true)],
+)?;
 
-// Open a file
-let resp = client.execute(BtrieveRequest {
-    operation_code: 0,  // OP_OPEN
-    file_path: "mydata.dat".to_string(),
-    ..Default::default()
-})?;
-
-let pos_block = resp.position_block;
-
-// Insert a record
-let resp = client.execute(BtrieveRequest {
-    operation_code: 2,  // OP_INSERT
-    position_block: pos_block.clone(),
-    data_buffer: my_record_bytes,
-    ..Default::default()
-})?;
+let mut file = BtrieveFile::open(
+    XtrieveClient::connect("127.0.0.1:7419")?,
+    "mydata.btr",
+    -1, // normal mode
+)?;
+file.insert(&my_record_bytes)?; // 64 bytes
+let record = file.get_equal(&key_bytes)?;
+file.close()?;
 ```
 
-**Async Client:**
-```rust
-use xtrieve_client::{AsyncXtrieveClient, BtrieveRequest};
-
-let mut client = AsyncXtrieveClient::connect("127.0.0.1:7419").await?;
-
-let resp = client.execute(BtrieveRequest {
-    operation_code: 0,
-    file_path: "mydata.dat".to_string(),
-    ..Default::default()
-}).await?;
-```
+Each TCP connection is a session. Open a separate connection for each
+independent transaction or cursor namespace.
 
 ## Btrieve Operation Codes
 
@@ -128,14 +126,27 @@ let resp = client.execute(BtrieveRequest {
 | 5    | GetEqual      | Get record by exact key match        |
 | 6    | GetNext       | Get next record in key order         |
 | 7    | GetPrevious   | Get previous record in key order     |
+| 8    | GetGreater    | First key greater than value         |
+| 9    | GetGE         | First key greater than or equal      |
+| 10   | GetLess       | First key less than value            |
+| 11   | GetLE         | First key less than or equal         |
 | 12   | GetFirst      | Get first record in key order        |
 | 13   | GetLast       | Get last record in key order         |
 | 14   | Create        | Create a new file                    |
 | 15   | Stat          | Get file statistics                  |
+| 16   | Extend        | Record extension file                |
+| 17   | SetDirectory  | Set this session's directory         |
+| 18   | GetDirectory  | Get this session's directory         |
 | 19   | BeginTrans    | Begin transaction                    |
 | 20   | EndTrans      | Commit transaction                   |
 | 21   | AbortTrans    | Rollback transaction                 |
+| 22   | GetPosition   | Save native cursor position          |
+| 23   | GetDirect     | Get record by address                |
 | 24   | StepNext      | Step to next physical record         |
+| 25   | Stop          | Close this session's resources       |
+| 26   | Version       | Return 5.10a version                 |
+| 27   | Unlock        | Release a record lock                |
+| 28   | Reset         | Close files and abort this session   |
 | 33   | StepFirst     | Step to first physical record        |
 | 34   | StepLast      | Step to last physical record         |
 | 35   | StepPrevious  | Step to previous physical record     |
@@ -154,59 +165,31 @@ Xtrieve uses a compact binary protocol (little-endian):
 [status:2][pos_block:128][data_len:4][data:N][key_len:2][key:N]
 ```
 
-## Examples
-
-### Weather Telemetry Demo
-
-Fetches real weather data from Open-Meteo API and stores in Xtrieve:
-
-```bash
-# Start the server
-./target/release/xtrieved --data-dir ./data &
-
-# Run telemetry collector (creates weather.dat, fetches data)
-cargo run --example weather_telemetry --features examples
-
-# Start web dashboard
-cargo run --example weather_web --features examples
-# Open http://localhost:3000
-```
-
-### Transaction Isolation Test
-
-```bash
-cargo run --example test_isolation
-```
-
 ## File Format
 
-Btrieve 5.1 files use:
-- Page sizes: 512, 1024, 2048, 4096 bytes
-- Page 0: FCR (File Control Record) with metadata
-- B+ tree indexes with interleaved data/index pages
+Genuine Btrieve/N 5.10a `.BTR` files use:
+- Page sizes: 512, 1024, 2048, or 4096 bytes
+- Page 0: FCR (File Control Record)
+- Interleaved data, index, variable, and PAT pages
+- Multi-level B-trees, duplicate chains, optional 265-byte ACS
 - Little-endian byte order throughout
+
+Older Xtrieve `.DAT`/`.IX#` files are **not** readable by this backend and are
+not migrated.
 
 ## Crate Structure
 
-- **xtrieve-engine** - Core storage engine (no I/O dependencies)
-- **xtrieved** - Server daemon with TCP listener
+- **xtrieve-engine** - Session-aware adapter around `third_party/btr-engine`
+- **xtrieved** - TCP daemon with one session per connection
 - **xtrieve-client** - Client library (sync + async)
 - **serial-bridge** - DOS serial-to-TCP bridge
 
-## Building for Size
+## Performance
 
-The release profile is optimized for binary size:
-
-```toml
-[profile.release]
-lto = true
-codegen-units = 1
-opt-level = "z"
-strip = true
-panic = "abort"
-```
-
-Result: 656 KB (down from 3.6 MB with gRPC)
+The byte-exact engine is optimized for compatibility, not concurrency. It
+reads, parses, and writes the whole file per operation, and the server
+serializes operations through one mutex. This is acceptable for DOS-era ISAM
+files; large-file throughput and caching are a separate follow-up.
 
 ## Documentation
 

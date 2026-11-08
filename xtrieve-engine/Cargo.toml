@@ -3,18 +3,16 @@ name = "xtrieve-engine"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Core storage engine for Xtrieve - Btrieve 5.1 compatible ISAM database"
+autoexamples = false
+description = "Btrieve/N 5.10a backend adapter for Xtrieve"
 
 [dependencies]
-byteorder.workspace = true
-bytes.workspace = true
+btr-engine.workspace = true
+btr-format.workspace = true
 parking_lot.workspace = true
-lru.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
-serde.workspace = true
-bitflags = "2"
-lazy_static = "1.4"
 
 [dev-dependencies]
 tempfile = "3"
+btr-format.workspace = true

@@ -26,15 +26,15 @@ Clients establish a TCP connection to the server. Each connection maintains its 
 | Field | Size | Description |
 |-------|------|-------------|
 | operation | 2 bytes | Btrieve operation code (u16) |
-| position_block | 128 bytes | File handle and cursor state |
-| data_length | 4 bytes | Length of data_buffer (u32) |
-| data_buffer | variable | Record data (for insert/update) or buffer for retrieval |
+| position_block | 128 bytes | Native Btrieve caller/FCB + cursor state |
+| data_length | 4 bytes | For writes, record length; for reads, buffer capacity (u32) |
+| data_buffer | variable | Record data for writes, or a zero-filled capacity buffer for reads |
 | key_length | 2 bytes | Length of key_buffer (u16) |
-| key_buffer | variable | Key value for keyed operations |
-| key_number | 2 bytes | Key index to use (i16, -1 for physical access) |
+| key_buffer | variable | Key value or filename |
+| key_number | 2 bytes | Key index; Open mode (-1 normal, -2 read-only, -3 verify, -4 exclusive); Create -1 |
 | path_length | 2 bytes | Length of file_path (u16) |
-| file_path | variable | File path for Open/Create operations (UTF-8) |
-| lock_bias | 2 bytes | Lock type modifier (u16) |
+| file_path | variable | Absolute/relative path for Open/Create; bypasses DOS filename parsing |
+| lock_bias | 2 bytes | 0/100/200/300/400; added to the base opcode |
 
 ## Response Format
 
@@ -56,25 +56,26 @@ Clients establish a TCP connection to the server. Each connection maintains its 
 
 ## Position Block
 
-The position block (128 bytes) is an opaque handle that maintains:
-- File identifier
-- Current record position
-- Current key number
-- Cursor state for sequential access
+The position block is the native 128-byte Btrieve/N 5.10a caller/FCB state.
+`btr-engine` writes bytes `0x00..0x3F` and preserves `0x40..0x7F`. Xtrieve does
+not store a session ID or path in it; the TCP connection is the session.
 
-**Important:** Always use the position_block from the previous response for subsequent operations on the same file.
+**Important:** Always use the position_block from the previous response for
+subsequent operations on the same file.
 
 ## Lock Bias
 
-Add these values to the operation code OR pass in lock_bias field:
+Add these values to the operation code OR pass them in the lock_bias field:
 
 | Value | Constant | Description |
 |-------|----------|-------------|
 | 0 | NO_LOCK | No locking |
-| 100 | SINGLE_WAIT_LOCK | Single record lock, wait if locked |
-| 200 | SINGLE_NO_WAIT_LOCK | Single record lock, return error if locked |
-| 300 | MULTI_WAIT_LOCK | Multi-record lock, wait if locked |
-| 400 | MULTI_NO_WAIT_LOCK | Multi-record lock, return error if locked |
+| 100 | SINGLE_WAIT_LOCK | Single record lock (currently non-blocking) |
+| 200 | SINGLE_NO_WAIT_LOCK | Single record lock, error if locked |
+| 300 | MULTI_WAIT_LOCK | Multi-record lock (currently non-blocking) |
+| 400 | MULTI_NO_WAIT_LOCK | Multi-record lock, error if locked |
+
+Wait-lock biases do not block; a conflicting record returns status 84.
 
 ## Example: Reading a Record
 
@@ -82,8 +83,8 @@ Add these values to the operation code OR pass in lock_bias field:
 ```
 05 00                   # Operation: GetEqual (5)
 [128 bytes pos_block]   # Position block from Open
-04 00 00 00             # Data length: 4
-00 00 00 00             # Data buffer (unused for read)
+64 00 00 00             # Data capacity: 100 bytes
+[100 zero bytes]         # Caller-supplied output capacity
 04 00                   # Key length: 4
 41 42 43 44             # Key: "ABCD"
 00 00                   # Key number: 0

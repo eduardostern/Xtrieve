@@ -1,4 +1,4 @@
-// Package xtrieve provides a client for Xtrieve database - a Btrieve 5.1 compatible ISAM engine.
+// Package xtrieve provides a client for Xtrieve database - a Btrieve/N 5.10a compatible ISAM engine.
 package xtrieve
 
 import (
@@ -18,76 +18,76 @@ const (
 
 // Operation codes
 const (
-	OpOpen             = 0
-	OpClose            = 1
-	OpInsert           = 2
-	OpUpdate           = 3
-	OpDelete           = 4
-	OpGetEqual         = 5
-	OpGetNext          = 6
-	OpGetPrevious      = 7
-	OpGetGreater       = 8
+	OpOpen              = 0
+	OpClose             = 1
+	OpInsert            = 2
+	OpUpdate            = 3
+	OpDelete            = 4
+	OpGetEqual          = 5
+	OpGetNext           = 6
+	OpGetPrevious       = 7
+	OpGetGreater        = 8
 	OpGetGreaterOrEqual = 9
-	OpGetLess          = 10
-	OpGetLessOrEqual   = 11
-	OpGetFirst         = 12
-	OpGetLast          = 13
-	OpCreate           = 14
-	OpStat             = 15
-	OpBeginTransaction = 19
-	OpEndTransaction   = 20
-	OpAbortTransaction = 21
-	OpStepNext         = 24
-	OpUnlock           = 27
-	OpStepFirst        = 33
-	OpStepLast         = 34
-	OpStepPrevious     = 35
+	OpGetLess           = 10
+	OpGetLessOrEqual    = 11
+	OpGetFirst          = 12
+	OpGetLast           = 13
+	OpCreate            = 14
+	OpStat              = 15
+	OpBeginTransaction  = 19
+	OpEndTransaction    = 20
+	OpAbortTransaction  = 21
+	OpStepNext          = 24
+	OpUnlock            = 27
+	OpStepFirst         = 33
+	OpStepLast          = 34
+	OpStepPrevious      = 35
 )
 
 // Status codes
 const (
-	StatusSuccess           = 0
-	StatusInvalidOperation  = 1
-	StatusIOError           = 2
-	StatusFileNotOpen       = 3
-	StatusKeyNotFound       = 4
-	StatusDuplicateKey      = 5
-	StatusInvalidKeyNumber  = 6
+	StatusSuccess            = 0
+	StatusInvalidOperation   = 1
+	StatusIOError            = 2
+	StatusFileNotOpen        = 3
+	StatusKeyNotFound        = 4
+	StatusDuplicateKey       = 5
+	StatusInvalidKeyNumber   = 6
 	StatusDifferentKeyNumber = 7
 	StatusInvalidPositioning = 8
-	StatusEndOfFile         = 9
-	StatusFileNotFound      = 12
-	StatusDiskFull          = 18
+	StatusEndOfFile          = 9
+	StatusFileNotFound       = 12
+	StatusDiskFull           = 18
 	StatusDataBufferTooShort = 22
-	StatusRecordLocked      = 84
-	StatusFileLocked        = 85
+	StatusRecordLocked       = 84
+	StatusFileLocked         = 85
 )
 
 // Lock bias values
 const (
-	LockNone        = 0
-	LockSingleWait  = 100
+	LockNone         = 0
+	LockSingleWait   = 100
 	LockSingleNoWait = 200
-	LockMultiWait   = 300
-	LockMultiNoWait = 400
+	LockMultiWait    = 300
+	LockMultiNoWait  = 400
 )
 
 // Key types
 const (
-	KeyTypeString        = 0
-	KeyTypeInteger       = 1
-	KeyTypeFloat         = 2
-	KeyTypeDate          = 3
-	KeyTypeTime          = 4
-	KeyTypeDecimal       = 5
-	KeyTypeMoney         = 6
-	KeyTypeLogical       = 7
-	KeyTypeNumeric       = 8
-	KeyTypeBfloat        = 9
-	KeyTypeLstring       = 10
-	KeyTypeZstring       = 11
+	KeyTypeString         = 0
+	KeyTypeInteger        = 1
+	KeyTypeFloat          = 2
+	KeyTypeDate           = 3
+	KeyTypeTime           = 4
+	KeyTypeDecimal        = 5
+	KeyTypeMoney          = 6
+	KeyTypeLogical        = 7
+	KeyTypeNumeric        = 8
+	KeyTypeBfloat         = 9
+	KeyTypeLstring        = 10
+	KeyTypeZstring        = 11
 	KeyTypeUnsignedBinary = 14
-	KeyTypeAutoincrement = 15
+	KeyTypeAutoincrement  = 15
 )
 
 // Key flags
@@ -132,15 +132,17 @@ type KeySpec struct {
 
 // FileSpec represents a file specification for creation
 type FileSpec struct {
-	RecordLength uint16
-	PageSize     uint16
-	Keys         []KeySpec
+	RecordLength  uint16
+	PageSize      uint16
+	FileFlags     uint16
+	Preallocation uint16
+	Keys          []KeySpec
 }
 
 // Client represents a connection to an Xtrieve server
 type Client struct {
-	conn  net.Conn
-	mu    sync.Mutex
+	conn net.Conn
+	mu   sync.Mutex
 }
 
 // Connect creates a new client and connects to the server
@@ -185,15 +187,16 @@ func (c *Client) Execute(req *Request) (*Response, error) {
 
 // BuildFileSpec creates a file specification buffer for Create operation
 func BuildFileSpec(spec *FileSpec) []byte {
-	headerSize := 10
+	headerSize := 16
 	keySpecSize := 16
 	buf := make([]byte, headerSize+len(spec.Keys)*keySpecSize)
 
-	// Header
+	// Header: file flags at +10, preallocation at +14.
 	binary.LittleEndian.PutUint16(buf[0:], spec.RecordLength)
 	binary.LittleEndian.PutUint16(buf[2:], spec.PageSize)
 	binary.LittleEndian.PutUint16(buf[4:], uint16(len(spec.Keys)))
-	// bytes 6-9 reserved (zero)
+	binary.LittleEndian.PutUint16(buf[10:], spec.FileFlags)
+	binary.LittleEndian.PutUint16(buf[14:], spec.Preallocation)
 
 	// Key specs
 	for i, key := range spec.Keys {
@@ -201,9 +204,8 @@ func BuildFileSpec(spec *FileSpec) []byte {
 		binary.LittleEndian.PutUint16(buf[offset:], key.Position)
 		binary.LittleEndian.PutUint16(buf[offset+2:], key.Length)
 		binary.LittleEndian.PutUint16(buf[offset+4:], key.Flags)
-		buf[offset+6] = key.Type
-		buf[offset+7] = key.NullValue
-		// bytes 8-15 reserved (zero)
+		buf[offset+10] = key.Type
+		buf[offset+11] = key.NullValue
 	}
 
 	return buf

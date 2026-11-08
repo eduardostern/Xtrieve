@@ -1,7 +1,7 @@
 /**
  * Xtrieve Client for C
  *
- * Btrieve 5.1 compatible ISAM database client using binary TCP protocol.
+ * Btrieve/N 5.10a compatible ISAM database client using binary TCP protocol.
  *
  * Usage:
  *   xtrieve_client_t *client = xtrieve_connect("127.0.0.1", 7419);
@@ -157,6 +157,8 @@ typedef struct xtrieve_file_spec {
     uint16_t record_length;
     uint16_t page_size;
     uint16_t num_keys;
+    uint16_t file_flags;
+    uint16_t preallocation;
     xtrieve_key_spec_t *keys;
 } xtrieve_file_spec_t;
 

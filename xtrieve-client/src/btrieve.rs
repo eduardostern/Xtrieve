@@ -1,90 +1,95 @@
-//! High-level Btrieve-compatible API
-//!
-//! This module provides a familiar API for developers who have used Btrieve.
+//! High-level Btrieve 5.10a-compatible API.
 
-use crate::client::{XtrieveClient, BtrieveRequest};
-use xtrieve_engine::{BtrieveError, BtrieveResult, StatusCode};
+use crate::client::{BtrieveRequest, BtrieveResponse, XtrieveClient};
+use xtrieve_engine::{status_codes, BtrieveError, BtrieveResult};
 
-/// Operation codes (matching Btrieve)
+/// Genuine Btrieve 5.10a operation codes.
 pub mod op {
-    pub const OPEN: u32 = 0;
-    pub const CLOSE: u32 = 1;
-    pub const INSERT: u32 = 2;
-    pub const UPDATE: u32 = 3;
-    pub const DELETE: u32 = 4;
-    pub const GET_EQUAL: u32 = 5;
-    pub const GET_NEXT: u32 = 6;
-    pub const GET_PREVIOUS: u32 = 7;
-    pub const GET_GREATER: u32 = 8;
-    pub const GET_GE: u32 = 9;
-    pub const GET_LESS: u32 = 10;
-    pub const GET_LE: u32 = 11;
-    pub const GET_FIRST: u32 = 12;
-    pub const GET_LAST: u32 = 13;
-    pub const CREATE: u32 = 14;
-    pub const STAT: u32 = 15;
-    pub const BEGIN_TRANSACTION: u32 = 19;
-    pub const END_TRANSACTION: u32 = 20;
-    pub const ABORT_TRANSACTION: u32 = 21;
-    pub const GET_POSITION: u32 = 22;
-    pub const GET_DIRECT: u32 = 23;
-    pub const STEP_NEXT: u32 = 24;
-    pub const STEP_FIRST: u32 = 33;
-    pub const STEP_LAST: u32 = 34;
-    pub const STEP_PREVIOUS: u32 = 35;
+    pub const OPEN: u16 = 0x00;
+    pub const CLOSE: u16 = 0x01;
+    pub const INSERT: u16 = 0x02;
+    pub const UPDATE: u16 = 0x03;
+    pub const DELETE: u16 = 0x04;
+    pub const GET_EQUAL: u16 = 0x05;
+    pub const GET_NEXT: u16 = 0x06;
+    pub const GET_PREVIOUS: u16 = 0x07;
+    pub const GET_GREATER: u16 = 0x08;
+    pub const GET_GE: u16 = 0x09;
+    pub const GET_LESS: u16 = 0x0A;
+    pub const GET_LE: u16 = 0x0B;
+    pub const GET_FIRST: u16 = 0x0C;
+    pub const GET_LAST: u16 = 0x0D;
+    pub const CREATE: u16 = 0x0E;
+    pub const STAT: u16 = 0x0F;
+    pub const EXTEND: u16 = 0x10;
+    pub const SET_DIRECTORY: u16 = 0x11;
+    pub const GET_DIRECTORY: u16 = 0x12;
+    pub const BEGIN_TRANSACTION: u16 = 0x13;
+    pub const END_TRANSACTION: u16 = 0x14;
+    pub const ABORT_TRANSACTION: u16 = 0x15;
+    pub const GET_POSITION: u16 = 0x16;
+    pub const GET_DIRECT: u16 = 0x17;
+    pub const STEP_NEXT: u16 = 0x18;
+    pub const STOP: u16 = 0x19;
+    pub const VERSION: u16 = 0x1A;
+    pub const UNLOCK: u16 = 0x1B;
+    pub const RESET: u16 = 0x1C;
+    pub const SET_OWNER: u16 = 0x1D;
+    pub const CLEAR_OWNER: u16 = 0x1E;
+    pub const CREATE_SUPPLEMENTAL: u16 = 0x1F;
+    pub const DROP_SUPPLEMENTAL: u16 = 0x20;
+    pub const STEP_FIRST: u16 = 0x21;
+    pub const STEP_LAST: u16 = 0x22;
+    pub const STEP_PREVIOUS: u16 = 0x23;
 }
 
-/// A record retrieved from a Btrieve file
+/// A record retrieved from a Btrieve file.
 #[derive(Debug, Clone)]
 pub struct BtrieveRecord {
-    /// Record data
     pub data: Vec<u8>,
-    /// Current key value
+    /// Echo of the request key buffer; genuine Get does not produce a key.
     pub key: Vec<u8>,
 }
 
-/// Handle to an open Btrieve file
 pub struct BtrieveFile {
     client: XtrieveClient,
-    file_path: String,
     position_block: Vec<u8>,
-    current_key: i32,
+    current_key: i16,
+    record_length: u16,
 }
 
 impl BtrieveFile {
-    /// Open a Btrieve file
-    pub fn open(mut client: XtrieveClient, path: &str, mode: i32) -> BtrieveResult<Self> {
+    pub fn open(mut client: XtrieveClient, path: &str, mode: i16) -> BtrieveResult<Self> {
         let request = BtrieveRequest {
             operation_code: op::OPEN,
+            key_number: mode,
             file_path: path.to_string(),
-            open_mode: mode,
+            position_block: vec![0x20; 128],
             ..Default::default()
         };
-
         let response = client.execute(request)?;
+        ensure_success(&response)?;
 
-        Ok(BtrieveFile {
+        let mut file = BtrieveFile {
             client,
-            file_path: path.to_string(),
             position_block: response.position_block,
             current_key: 0,
-        })
+            record_length: 0,
+        };
+        file.record_length = file.stat()?.record_length;
+        Ok(file)
     }
 
-    /// Close the file
     pub fn close(mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::CLOSE,
-            position_block: self.position_block.clone(),
-            file_path: self.file_path.clone(),
+            position_block: self.position_block,
             ..Default::default()
         };
-
-        self.client.execute(request)?;
-        Ok(())
+        let response = self.client.execute(request)?;
+        ensure_success(&response)
     }
 
-    /// Insert a record
     pub fn insert(&mut self, data: &[u8]) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::INSERT,
@@ -93,13 +98,12 @@ impl BtrieveFile {
             data_buffer_length: data.len() as u32,
             ..Default::default()
         };
-
         let response = self.client.execute(request)?;
+        ensure_success(&response)?;
         self.position_block = response.position_block;
         Ok(())
     }
 
-    /// Update the current record
     pub fn update(&mut self, data: &[u8]) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::UPDATE,
@@ -108,213 +112,105 @@ impl BtrieveFile {
             data_buffer_length: data.len() as u32,
             ..Default::default()
         };
-
         let response = self.client.execute(request)?;
+        ensure_success(&response)?;
         self.position_block = response.position_block;
         Ok(())
     }
 
-    /// Delete the current record
     pub fn delete(&mut self) -> BtrieveResult<()> {
         let request = BtrieveRequest {
             operation_code: op::DELETE,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
-
         let response = self.client.execute(request)?;
+        ensure_success(&response)?;
         self.position_block = response.position_block;
         Ok(())
     }
 
-    /// Set the current key number for subsequent operations
-    pub fn set_key(&mut self, key_number: i32) {
+    pub fn set_key(&mut self, key_number: i16) {
         self.current_key = key_number;
     }
 
-    /// Get Equal - find record by exact key match
+    fn record_request(&self, operation: u16) -> BtrieveRequest {
+        let capacity = self.record_length.max(1) as usize;
+        BtrieveRequest {
+            operation_code: operation,
+            position_block: self.position_block.clone(),
+            data_buffer: vec![0u8; capacity],
+            data_buffer_length: capacity as u32,
+            key_number: self.current_key,
+            ..Default::default()
+        }
+    }
+
+    fn read(&mut self, operation: u16, key: Option<&[u8]>) -> BtrieveResult<BtrieveRecord> {
+        let mut request = self.record_request(operation);
+        if let Some(key) = key {
+            request.key_buffer = key.to_vec();
+            request.key_buffer_length = key.len() as u32;
+        }
+        let response = self.client.execute(request)?;
+        ensure_success(&response)?;
+        self.position_block = response.position_block;
+        Ok(BtrieveRecord {
+            data: response.data_buffer,
+            key: response.key_buffer,
+        })
+    }
+
     pub fn get_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_EQUAL,
-            position_block: self.position_block.clone(),
-            key_buffer: key.to_vec(),
-            key_buffer_length: key.len() as u32,
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_EQUAL, Some(key))
     }
 
-    /// Get Next - get next record in key order
     pub fn get_next(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_NEXT,
-            position_block: self.position_block.clone(),
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_NEXT, None)
     }
 
-    /// Get Previous - get previous record in key order
     pub fn get_previous(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_PREVIOUS,
-            position_block: self.position_block.clone(),
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_PREVIOUS, None)
     }
 
-    /// Get First - get first record in key order
     pub fn get_first(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_FIRST,
-            position_block: self.position_block.clone(),
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_FIRST, None)
     }
 
-    /// Get Last - get last record in key order
     pub fn get_last(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_LAST,
-            position_block: self.position_block.clone(),
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_LAST, None)
     }
 
-    /// Get Greater - get first record with key greater than given
     pub fn get_greater(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_GREATER,
-            position_block: self.position_block.clone(),
-            key_buffer: key.to_vec(),
-            key_buffer_length: key.len() as u32,
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_GREATER, Some(key))
     }
 
-    /// Get Greater or Equal
     pub fn get_greater_or_equal(&mut self, key: &[u8]) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::GET_GE,
-            position_block: self.position_block.clone(),
-            key_buffer: key.to_vec(),
-            key_buffer_length: key.len() as u32,
-            key_number: self.current_key,
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: response.key_buffer,
-        })
+        self.read(op::GET_GE, Some(key))
     }
 
-    /// Step First - get first record physically
     pub fn step_first(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::STEP_FIRST,
-            position_block: self.position_block.clone(),
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: Vec::new(),
-        })
+        self.read(op::STEP_FIRST, None)
     }
 
-    /// Step Next - get next record physically
     pub fn step_next(&mut self) -> BtrieveResult<BtrieveRecord> {
-        let request = BtrieveRequest {
-            operation_code: op::STEP_NEXT,
-            position_block: self.position_block.clone(),
-            ..Default::default()
-        };
-
-        let response = self.client.execute(request)?;
-        self.position_block = response.position_block;
-
-        Ok(BtrieveRecord {
-            data: response.data_buffer,
-            key: Vec::new(),
-        })
+        self.read(op::STEP_NEXT, None)
     }
 
-    /// Get file statistics
     pub fn stat(&mut self) -> BtrieveResult<FileStatistics> {
         let request = BtrieveRequest {
             operation_code: op::STAT,
             position_block: self.position_block.clone(),
-            file_path: self.file_path.clone(),
+            data_buffer: vec![0u8; 4096],
+            data_buffer_length: 4096,
             ..Default::default()
         };
-
         let response = self.client.execute(request)?;
-
-        // Parse statistics from data buffer
+        ensure_success(&response)?;
         let data = &response.data_buffer;
-        if data.len() < 12 {
-            return Err(BtrieveError::Status(StatusCode::DataBufferTooShort));
+        if data.len() < 10 {
+            return Err(BtrieveError::Status(status_codes::DATA_BUFFER_LENGTH));
         }
-
         Ok(FileStatistics {
             record_length: u16::from_le_bytes([data[0], data[1]]),
             page_size: u16::from_le_bytes([data[2], data[3]]),
@@ -323,44 +219,32 @@ impl BtrieveFile {
         })
     }
 
-    /// Begin transaction
     pub fn begin_transaction(&mut self) -> BtrieveResult<()> {
-        let request = BtrieveRequest {
-            operation_code: op::BEGIN_TRANSACTION,
-            position_block: self.position_block.clone(),
-            ..Default::default()
-        };
-
-        self.client.execute(request)?;
-        Ok(())
+        self.transaction(op::BEGIN_TRANSACTION)
     }
 
-    /// End (commit) transaction
     pub fn end_transaction(&mut self) -> BtrieveResult<()> {
-        let request = BtrieveRequest {
-            operation_code: op::END_TRANSACTION,
-            position_block: self.position_block.clone(),
-            ..Default::default()
-        };
-
-        self.client.execute(request)?;
-        Ok(())
+        self.transaction(op::END_TRANSACTION)
     }
 
-    /// Abort (rollback) transaction
     pub fn abort_transaction(&mut self) -> BtrieveResult<()> {
+        self.transaction(op::ABORT_TRANSACTION)
+    }
+
+    fn transaction(&mut self, operation: u16) -> BtrieveResult<()> {
         let request = BtrieveRequest {
-            operation_code: op::ABORT_TRANSACTION,
+            operation_code: operation,
             position_block: self.position_block.clone(),
             ..Default::default()
         };
-
-        self.client.execute(request)?;
+        let response = self.client.execute(request)?;
+        ensure_success(&response)?;
+        self.position_block = response.position_block;
         Ok(())
     }
 }
 
-/// File statistics returned by stat operation
+/// File statistics returned by Stat.
 #[derive(Debug, Clone)]
 pub struct FileStatistics {
     pub record_length: u16,
@@ -369,7 +253,7 @@ pub struct FileStatistics {
     pub num_records: u32,
 }
 
-/// Create a new Btrieve file
+/// Create a genuine 5.10a file specification.
 pub fn create_file(
     mut client: XtrieveClient,
     path: &str,
@@ -377,38 +261,43 @@ pub fn create_file(
     page_size: u16,
     keys: Vec<KeyDefinition>,
 ) -> BtrieveResult<()> {
-    // Build data buffer with file spec
-    let mut data = Vec::new();
-    data.extend_from_slice(&record_length.to_le_bytes());
-    data.extend_from_slice(&page_size.to_le_bytes());
-    data.extend_from_slice(&(keys.len() as u16).to_le_bytes());
-    data.extend_from_slice(&[0u8; 4]); // reserved/flags
+    let mut data = vec![0u8; 16];
+    data[0..2].copy_from_slice(&record_length.to_le_bytes());
+    data[2..4].copy_from_slice(&page_size.to_le_bytes());
+    data[4..6].copy_from_slice(&(keys.len() as u16).to_le_bytes());
+    // Bytes 10..12 carry file flags, 14..16 carry preallocation.
 
-    // Add key specifications
     for key in &keys {
-        data.extend_from_slice(&key.position.to_le_bytes());
-        data.extend_from_slice(&key.length.to_le_bytes());
-        data.extend_from_slice(&key.flags.to_le_bytes());
-        data.extend_from_slice(&[0u8; 4]); // unique_count placeholder
-        data.push(key.key_type);
-        data.push(key.null_value);
-        data.push(0); // acs_number
-        data.push(0); // reserved
+        let mut block = [0u8; 16];
+        block[0..2].copy_from_slice(&key.position.to_le_bytes());
+        block[2..4].copy_from_slice(&key.length.to_le_bytes());
+        block[4..6].copy_from_slice(&key.flags.to_le_bytes());
+        block[10] = key.key_type;
+        block[11] = key.null_value;
+        data.extend_from_slice(&block);
     }
 
     let request = BtrieveRequest {
         operation_code: op::CREATE,
         file_path: path.to_string(),
+        data_buffer_length: data.len() as u32,
         data_buffer: data,
-        data_buffer_length: 10 + (keys.len() as u32 * 16),
+        position_block: vec![0x20; 128],
         ..Default::default()
     };
-
-    client.execute(request)?;
-    Ok(())
+    let response = client.execute(request)?;
+    ensure_success(&response)
 }
 
-/// Key definition for creating files
+fn ensure_success(response: &BtrieveResponse) -> BtrieveResult<()> {
+    if response.status_code == status_codes::SUCCESS {
+        Ok(())
+    } else {
+        Err(BtrieveError::Status(response.status_code))
+    }
+}
+
+/// Key definition for Create.
 #[derive(Debug, Clone)]
 pub struct KeyDefinition {
     pub position: u16,
@@ -419,58 +308,63 @@ pub struct KeyDefinition {
 }
 
 impl KeyDefinition {
-    /// Create a string key
     pub fn string(position: u16, length: u16, duplicates: bool, modifiable: bool) -> Self {
         let mut flags = 0u16;
-        if duplicates { flags |= 0x0001; }
-        if modifiable { flags |= 0x0002; }
-
+        if duplicates {
+            flags |= 0x0001;
+        }
+        if modifiable {
+            flags |= 0x0002;
+        }
         KeyDefinition {
             position,
             length,
             flags,
-            key_type: 0, // String
+            key_type: 0,
             null_value: 0,
         }
     }
 
-    /// Create an integer key
     pub fn integer(position: u16, length: u16, duplicates: bool, modifiable: bool) -> Self {
         let mut flags = 0u16;
-        if duplicates { flags |= 0x0001; }
-        if modifiable { flags |= 0x0002; }
-
+        if duplicates {
+            flags |= 0x0001;
+        }
+        if modifiable {
+            flags |= 0x0002;
+        }
         KeyDefinition {
             position,
             length,
             flags,
-            key_type: 1, // Integer
+            key_type: 1,
             null_value: 0,
         }
     }
 
-    /// Create an unsigned integer key
     pub fn unsigned(position: u16, length: u16, duplicates: bool, modifiable: bool) -> Self {
         let mut flags = 0u16;
-        if duplicates { flags |= 0x0001; }
-        if modifiable { flags |= 0x0002; }
-
+        if duplicates {
+            flags |= 0x0001;
+        }
+        if modifiable {
+            flags |= 0x0002;
+        }
         KeyDefinition {
             position,
             length,
             flags,
-            key_type: 14, // Unsigned binary
+            key_type: 14,
             null_value: 0,
         }
     }
 
-    /// Create an autoincrement key
     pub fn autoincrement(position: u16, length: u16) -> Self {
         KeyDefinition {
             position,
             length,
-            flags: 0, // No duplicates, not modifiable
-            key_type: 15, // Autoincrement
+            flags: 0,
+            key_type: 15,
             null_value: 0,
         }
     }

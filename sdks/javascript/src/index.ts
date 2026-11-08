@@ -1,7 +1,7 @@
 /**
  * Xtrieve Client for Node.js
  *
- * Btrieve 5.1 compatible ISAM database client using binary TCP protocol.
+ * Btrieve/N 5.10a compatible ISAM database client using binary TCP protocol.
  */
 
 import * as net from 'net';
@@ -227,16 +227,15 @@ export class XtrieveClient {
      * Build file specification buffer for Create operation
      */
     static buildFileSpec(spec: FileSpec): Buffer {
-        const headerSize = 10;
+        const headerSize = 16;
         const keySpecSize = 16;
         const totalSize = headerSize + spec.keys.length * keySpecSize;
         const buf = Buffer.alloc(totalSize);
 
-        // Header
+        // Header: file flags at +10, preallocation at +14.
         buf.writeUInt16LE(spec.recordLength, 0);
         buf.writeUInt16LE(spec.pageSize, 2);
         buf.writeUInt16LE(spec.keys.length, 4);
-        buf.writeUInt32LE(0, 6);  // Reserved
 
         // Key specs
         let offset = headerSize;
@@ -244,9 +243,8 @@ export class XtrieveClient {
             buf.writeUInt16LE(key.position, offset);
             buf.writeUInt16LE(key.length, offset + 2);
             buf.writeUInt16LE(key.flags, offset + 4);
-            buf.writeUInt8(key.type, offset + 6);
-            buf.writeUInt8(key.nullValue ?? 0, offset + 7);
-            // Reserved 8 bytes are already zero
+            buf.writeUInt8(key.type, offset + 10);
+            buf.writeUInt8(key.nullValue ?? 0, offset + 11);
             offset += keySpecSize;
         }
 

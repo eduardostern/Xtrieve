@@ -7,11 +7,18 @@
 //!
 //! Response format:
 //!   [status:2][pos_block:128][data_len:4][data:N][key_len:2][key:N]
+//!
+//! For read operations, the request data buffer is a zero-filled output
+//! capacity; the response data length is the actual result length.  The
+//! position block is the native Btrieve 5.10a 128-byte caller state.
 
 use std::io::{self, Read, Write};
 
 pub const POSITION_BLOCK_SIZE: usize = 128;
 pub const DEFAULT_PORT: u16 = 7419;
+pub const MAX_DATA_BUFFER: usize = 64 * 1024 * 1024;
+pub const MAX_KEY_BUFFER: usize = 64 * 1024;
+pub const MAX_PATH_BUFFER: usize = 4096;
 
 /// Request from client to server
 #[derive(Debug, Clone)]
@@ -89,6 +96,12 @@ impl Request {
         // Data buffer
         reader.read_exact(&mut buf4)?;
         let data_len = u32::from_le_bytes(buf4) as usize;
+        if data_len > MAX_DATA_BUFFER {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "data buffer too large",
+            ));
+        }
         let mut data_buffer = vec![0u8; data_len];
         if data_len > 0 {
             reader.read_exact(&mut data_buffer)?;
@@ -97,6 +110,12 @@ impl Request {
         // Key buffer
         reader.read_exact(&mut buf2)?;
         let key_len = u16::from_le_bytes(buf2) as usize;
+        if key_len > MAX_KEY_BUFFER {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "key buffer too large",
+            ));
+        }
         let mut key_buffer = vec![0u8; key_len];
         if key_len > 0 {
             reader.read_exact(&mut key_buffer)?;
@@ -109,6 +128,12 @@ impl Request {
         // File path
         reader.read_exact(&mut buf2)?;
         let path_len = u16::from_le_bytes(buf2) as usize;
+        if path_len > MAX_PATH_BUFFER {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "path buffer too large",
+            ));
+        }
         let mut path_buf = vec![0u8; path_len];
         if path_len > 0 {
             reader.read_exact(&mut path_buf)?;
@@ -190,6 +215,12 @@ impl Response {
         // Data buffer
         reader.read_exact(&mut buf4)?;
         let data_len = u32::from_le_bytes(buf4) as usize;
+        if data_len > MAX_DATA_BUFFER {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "data buffer too large",
+            ));
+        }
         let mut data_buffer = vec![0u8; data_len];
         if data_len > 0 {
             reader.read_exact(&mut data_buffer)?;
@@ -198,6 +229,12 @@ impl Response {
         // Key buffer
         reader.read_exact(&mut buf2)?;
         let key_len = u16::from_le_bytes(buf2) as usize;
+        if key_len > MAX_KEY_BUFFER {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "key buffer too large",
+            ));
+        }
         let mut key_buffer = vec![0u8; key_len];
         if key_len > 0 {
             reader.read_exact(&mut key_buffer)?;

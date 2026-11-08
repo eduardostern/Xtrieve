@@ -2,7 +2,7 @@
 /**
  * Xtrieve Client for PHP
  *
- * Btrieve 5.1 compatible ISAM database client using binary TCP protocol.
+ * Btrieve/N 5.10a compatible ISAM database client using binary TCP protocol.
  *
  * @package Xtrieve
  */
@@ -249,20 +249,21 @@ class XtrieveClient
     {
         $buf = '';
 
-        // Header
+        // Header: file flags at +10, preallocation at +14.
         $buf .= pack('v', $spec->recordLength);  // record length
         $buf .= pack('v', $spec->pageSize);       // page size
         $buf .= pack('v', count($spec->keys));    // num keys
-        $buf .= pack('V', 0);                      // reserved
+        $buf .= str_repeat("\0", 10);             // flags/reserved/preallocation
 
         // Key specs
         foreach ($spec->keys as $key) {
             $buf .= pack('v', $key->position);
             $buf .= pack('v', $key->length);
             $buf .= pack('v', $key->flags);
+            $buf .= str_repeat("\0", 4);          // reserved
             $buf .= chr($key->type);
             $buf .= chr($key->nullValue);
-            $buf .= str_repeat("\0", 8);  // reserved
+            $buf .= str_repeat("\0", 4);          // reserved
         }
 
         return $buf;

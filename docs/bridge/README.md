@@ -41,7 +41,7 @@ The Xtrieve DOS Bridge connects legacy DOS applications to the modern Xtrieve se
                    │
                    ▼
 ┌─────────────────────────────────────────┐
-│             *.DAT FILES                 │
+│             *.BTR FILES                 │
 │       (Native Btrieve Format)           │
 └─────────────────────────────────────────┘
 ```

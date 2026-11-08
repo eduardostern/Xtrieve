@@ -319,28 +319,28 @@ void xtrieve_response_free(xtrieve_response_t *response) {
 int xtrieve_build_file_spec(const xtrieve_file_spec_t *spec,
                             uint8_t *buffer,
                             size_t buffer_size) {
-    size_t needed = 10 + spec->num_keys * 16;
+    size_t needed = 16 + spec->num_keys * 16;
     if (buffer_size < needed) return -1;
 
     memset(buffer, 0, needed);
 
-    /* Header */
+    /* Header: file flags at +10, preallocation at +14. */
     write_u16_le(buffer + 0, spec->record_length);
     write_u16_le(buffer + 2, spec->page_size);
     write_u16_le(buffer + 4, spec->num_keys);
-    /* 4 bytes reserved at offset 6 */
+    write_u16_le(buffer + 10, spec->file_flags);
+    write_u16_le(buffer + 14, spec->preallocation);
 
     /* Key specs */
     for (uint16_t i = 0; i < spec->num_keys; i++) {
-        size_t key_offset = 10 + i * 16;
+        size_t key_offset = 16 + i * 16;
         const xtrieve_key_spec_t *key = &spec->keys[i];
 
         write_u16_le(buffer + key_offset + 0, key->position);
         write_u16_le(buffer + key_offset + 2, key->length);
         write_u16_le(buffer + key_offset + 4, key->flags);
-        buffer[key_offset + 6] = key->type;
-        buffer[key_offset + 7] = key->null_value;
-        /* 8 bytes reserved */
+        buffer[key_offset + 10] = key->type;
+        buffer[key_offset + 11] = key->null_value;
     }
 
     return (int)needed;

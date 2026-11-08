@@ -3,7 +3,7 @@ name = "xtrieved"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Xtrieve daemon - Btrieve 5.1 compatible database server"
+description = "Xtrieve daemon - Btrieve/N 5.10a compatible database server"
 
 [[bin]]
 name = "xtrieved"
@@ -15,3 +15,8 @@ clap.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 anyhow.workspace = true
+
+[dev-dependencies]
+xtrieve-client.workspace = true
+btr-format.workspace = true
+tempfile = "3"

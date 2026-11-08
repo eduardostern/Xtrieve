@@ -1,6 +1,6 @@
 # Xtrieve Client for Go
 
-Go client library for Xtrieve - a Btrieve 5.1 compatible ISAM database engine.
+Go client library for Xtrieve - a Btrieve/N 5.10a compatible ISAM database engine.
 
 ## Installation
 

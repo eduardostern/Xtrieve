@@ -118,7 +118,7 @@ int do_call(BTR_PARMS far *p)
     }
 
     dlen = p->data_len;
-    klen = 80;
+    klen = p->key_len ? (unsigned int)p->key_len : 80;
 
     /* SEND REQUEST */
     /* Sync marker: 0xBB 0xBB (easily identifiable) */
@@ -140,7 +140,7 @@ int do_call(BTR_PARMS far *p)
     for (i = 0; i < klen; i++)
         ser_putc(src ? src[i] : 0);
 
-    send_u16((unsigned int)(p->key_num & 0xFF));
+    send_u16((unsigned int)((int)p->key_num & 0xFFFF));
 
     send_u16(plen);
     for (i = 0; i < plen; i++)

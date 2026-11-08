@@ -111,7 +111,7 @@
                             │             │               │
                             │             ▼               │
                             │  ┌─────────────────────┐    │
-                            │  │   *.DAT FILES       │    │
+                            │  │   *.BTR FILES       │    │
                             │  │   (Native Btrieve   │    │
                             │  │    File Format)     │    │
                             │  └─────────────────────┘    │
@@ -210,7 +210,7 @@
     │    $ cargo run -p xtrieved                                         │
     │                                                                     │
     │    Xtrieve Record Manager Version 0.1.0                            │
-    │    Btrieve 5.10 Compatible ISAM Database Engine                    │
+    │    Btrieve/N 5.10a Compatible ISAM Database Engine                    │
     │    Listening on 127.0.0.1:7419                                     │
     │                                                                     │
     └─────────────────────────────────────────────────────────────────────┘
@@ -321,8 +321,8 @@
                  ║  xtrieved                                    ║
                  ╠══════════════════════════════════════════════╣
                  ║  Language:     Rust 2021                     ║
-                 ║  Compatibility: Btrieve 5.10                 ║
-                 ║  File Format:  Native Btrieve .DAT           ║
+                 ║  Compatibility: Btrieve/N 5.10a                 ║
+                 ║  File Format:  Native Btrieve .BTR           ║
                  ║  Page Sizes:   512-4096 bytes                ║
                  ║  Key Types:    String, Integer, Float, etc.  ║
                  ╚══════════════════════════════════════════════╝

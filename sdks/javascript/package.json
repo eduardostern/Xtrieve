@@ -1,7 +1,7 @@
 {
   "name": "xtrieve-client",
   "version": "1.0.0",
-  "description": "Xtrieve database client - Btrieve 5.1 compatible ISAM engine",
+  "description": "Xtrieve database client - Btrieve/N 5.10a compatible ISAM engine",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

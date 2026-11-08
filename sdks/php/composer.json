@@ -1,6 +1,6 @@
 {
     "name": "xtrieve/client",
-    "description": "Xtrieve database client - Btrieve 5.1 compatible ISAM engine",
+    "description": "Xtrieve database client - Btrieve/N 5.10a compatible ISAM engine",
     "type": "library",
     "license": "MIT",
     "autoload": {

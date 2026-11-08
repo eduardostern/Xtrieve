@@ -1,13 +1,17 @@
-//! Xtrieve Engine - Btrieve 5.1 Compatible ISAM Database Engine
+//! Xtrieve engine adapter.
 //!
-//! This crate provides the core storage engine for reading and writing
-//! Btrieve 5.1 compatible database files.
+//! Runtime storage is the clean-room Btrieve/N 5.10a engine in
+//! `third_party/btr-engine`.  This crate keeps the daemon's request/response
+//! envelope and the Xtrieve TCP protocol.
 
 pub mod error;
-pub mod storage;
-pub mod file_manager;
 pub mod operations;
 pub mod protocol;
 
-pub use error::{BtrieveError, BtrieveResult, StatusCode};
-pub use protocol::{Request, Response, POSITION_BLOCK_SIZE, DEFAULT_PORT};
+pub use btr_engine::status as status_codes;
+pub use error::{BtrieveError, BtrieveResult, Status};
+pub use operations::{Engine, OperationRequest, OperationResponse};
+pub use protocol::{Request, Response, DEFAULT_PORT, POSITION_BLOCK_SIZE};
+
+/// Native Btrieve caller/FCB state block.
+pub type PositionBlock = [u8; POSITION_BLOCK_SIZE];
