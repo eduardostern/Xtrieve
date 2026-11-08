@@ -114,6 +114,15 @@ file.close()?;
 Each TCP connection is a session. Open a separate connection for each
 independent transaction or cursor namespace.
 
+### Runnable demo
+
+```bash
+cargo run -p xtrieved --example demo
+```
+
+The demo starts a temporary daemon, creates `demo.btr`, inserts records, reads
+one back, and exits. See `xtrieved/examples/demo.rs`.
+
 ## Btrieve Operation Codes
 
 | Code | Operation     | Description                          |
